@@ -1,0 +1,123 @@
+[
+  {
+    "name": "FEMA",
+    "vertical": "Government and Civil",
+    "relationshipType": "Existing target account",
+    "fitNotes": "Disaster response, damage assessment, rescue prioritization, and public-sector situational awareness.",
+    "personas": ["Emergency Management Director", "GIS Lead", "Disaster Response Coordinator", "Resilience Planner"],
+    "accountSignals": ["disaster response planning", "damage assessment", "infrastructure resilience", "public-sector situational awareness"],
+    "suggestedMotions": ["public-sector education", "invite-only briefing", "sales handoff", "event follow-up"],
+    "disqualificationFlags": ["no disaster response or infrastructure monitoring initiative"],
+    "reviewRequired": true
+  },
+  {
+    "name": "NOAA",
+    "vertical": "Government and Civil",
+    "relationshipType": "Existing target account",
+    "fitNotes": "Public environmental, weather, ocean, and climate monitoring workflows.",
+    "personas": ["Program Manager", "Earth Observation Lead", "GIS Analyst", "Climate Scientist"],
+    "accountSignals": ["environmental monitoring", "weather resilience", "ocean monitoring", "climate data access"],
+    "suggestedMotions": ["technical education", "public-sector webinar", "product demo", "research workflow briefing"],
+    "disqualificationFlags": ["campaign is unrelated to public environmental or climate monitoring"],
+    "reviewRequired": true
+  },
+  {
+    "name": "NASA",
+    "vertical": "Government and Civil",
+    "relationshipType": "Existing target account",
+    "fitNotes": "Public research, Earth science, climate, and satellite data workflows.",
+    "personas": ["Earth Science Program Lead", "Research Scientist", "Data Systems Lead", "GIS Program Manager"],
+    "accountSignals": ["Earth science", "research access", "data workflow modernization", "climate monitoring"],
+    "suggestedMotions": ["technical community education", "workflow demo", "research briefing"],
+    "disqualificationFlags": ["campaign is not relevant to public research or Earth observation"],
+    "reviewRequired": true
+  },
+  {
+    "name": "AXA",
+    "vertical": "Insurance and Risk",
+    "relationshipType": "Existing target account",
+    "fitNotes": "Insurance, risk modeling, disaster exposure, claims triage, and climate risk workflows.",
+    "personas": ["Head of Risk", "Claims Innovation Lead", "Catastrophe Modeling Lead", "Climate Risk Director"],
+    "accountSignals": ["claims modernization", "catastrophe risk", "climate exposure", "disaster response"],
+    "suggestedMotions": ["risk intelligence nurture", "executive briefing", "sales handoff"],
+    "disqualificationFlags": ["no risk, claims, or catastrophe modeling angle"],
+    "reviewRequired": true
+  },
+  {
+    "name": "Munich Re",
+    "vertical": "Insurance and Risk",
+    "relationshipType": "New prospect",
+    "fitNotes": "Reinsurance, catastrophe modeling, climate exposure, and risk intelligence.",
+    "personas": ["Catastrophe Modeling Lead", "Climate Risk Executive", "Portfolio Risk Analyst"],
+    "accountSignals": ["reinsurance", "catastrophe risk", "climate risk modeling", "loss exposure"],
+    "suggestedMotions": ["thought leadership", "risk intelligence nurture", "webinar follow-up"],
+    "disqualificationFlags": ["campaign not tied to risk evidence or catastrophe exposure"],
+    "reviewRequired": true
+  },
+  {
+    "name": "Syngenta",
+    "vertical": "Agriculture",
+    "relationshipType": "Existing customer",
+    "fitNotes": "Crop science, digital farming, Cropwise, field monitoring, crop health, and agronomic decisions.",
+    "personas": ["Digital Farming Lead", "Agronomy Platform Lead", "Crop Science Leader", "Partnerships Lead"],
+    "accountSignals": ["Cropwise", "field intelligence", "crop health", "yield prediction", "sustainability claims"],
+    "suggestedMotions": ["expansion", "partner co-marketing", "product adoption", "executive education"],
+    "disqualificationFlags": ["net-new awareness messaging"],
+    "reviewRequired": true
+  },
+  {
+    "name": "BASF xarvio",
+    "vertical": "Agriculture",
+    "relationshipType": "Existing target account",
+    "fitNotes": "Digital farming, agronomic insights, crop monitoring, and precision agriculture.",
+    "personas": ["Digital Farming Product Lead", "Agronomy Lead", "Partnerships Lead"],
+    "accountSignals": ["digital farming", "crop monitoring", "precision agriculture", "field-level analytics"],
+    "suggestedMotions": ["agriculture ABM", "partner webinar", "account team enablement"],
+    "disqualificationFlags": ["campaign not related to farming or crop intelligence"],
+    "reviewRequired": false
+  },
+  {
+    "name": "Port of Rotterdam",
+    "vertical": "Maritime",
+    "relationshipType": "New prospect",
+    "fitNotes": "Port operations, vessel activity, maritime domain awareness, supply chain visibility, and port congestion.",
+    "personas": ["Port Operations Lead", "Maritime Intelligence Lead", "Supply Chain Visibility Lead"],
+    "accountSignals": ["port operations", "vessel activity", "supply chain disruption", "maritime visibility"],
+    "suggestedMotions": ["maritime ABM", "invite-only demo", "trade event follow-up"],
+    "disqualificationFlags": ["no port, vessel, ocean, or maritime activity angle"],
+    "reviewRequired": true
+  },
+  {
+    "name": "NATO",
+    "vertical": "Defense and Intelligence",
+    "relationshipType": "Existing target account",
+    "fitNotes": "Defense alliance, strategic monitoring, mission planning, and public non-sensitive intelligence workflows.",
+    "personas": ["Geospatial Intelligence Lead", "Mission Planning Lead", "Innovation Program Lead"],
+    "accountSignals": ["strategic monitoring", "mission planning", "maritime domain awareness", "change detection"],
+    "suggestedMotions": ["executive briefing", "defense event follow-up", "sales handoff"],
+    "disqualificationFlags": ["classified or operationally sensitive campaign claims"],
+    "reviewRequired": true
+  },
+  {
+    "name": "BlackRock",
+    "vertical": "Finance and Commodities",
+    "relationshipType": "Unknown",
+    "fitNotes": "Possible alternative data, economic signals, commodity exposure, and climate risk intelligence.",
+    "personas": ["Alternative Data Lead", "Macro Research Lead", "Climate Risk Analyst"],
+    "accountSignals": ["alternative data", "economic indicators", "commodity exposure", "climate risk"],
+    "suggestedMotions": ["research education", "analyst briefing", "relationship validation"],
+    "disqualificationFlags": ["no investment research, commodity, or risk intelligence angle"],
+    "reviewRequired": true
+  },
+  {
+    "name": "Uber",
+    "vertical": "Other / Adjacent / Manual Review",
+    "relationshipType": "Unknown",
+    "fitNotes": "Commercial mobility and logistics platform; possible adjacent mapping, infrastructure, or disruption intelligence only after validation.",
+    "personas": ["Mobility Operations Lead", "Mapping Platform Lead", "Logistics Strategy Lead"],
+    "accountSignals": ["mapping", "mobility infrastructure", "logistics disruption", "urban operations"],
+    "suggestedMotions": ["relationship validation", "adjacent fit review", "internal strategy review"],
+    "disqualificationFlags": ["no clear Planet MVP vertical fit", "generic commercial mobility only"],
+    "reviewRequired": true
+  }
+]

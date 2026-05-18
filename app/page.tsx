@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { BriefView } from "@/app/components/BriefView";
 import { OrbitField } from "@/app/components/OrbitField";
@@ -51,6 +52,10 @@ export default function Home() {
               Research a target account, classify its best-fit Planet vertical, retrieve approved
               messaging, and generate a review-ready campaign strategy with copy starters and KPIs.
             </p>
+            <div className="modeLinks">
+              <Link href="/" className="activeLink">Account Brief</Link>
+              <Link href="/campaign-idea">Campaign Idea Mapper</Link>
+            </div>
           </div>
           <form className="briefForm" onSubmit={handleSubmit}>
             <label htmlFor="companyName">Target account</label>

@@ -201,3 +201,182 @@ export type LegacyVerticalDetection = {
   reasoning: string;
   possible_secondary_vertical: PlanetVerticalName | null;
 };
+
+export const RELATIONSHIP_TYPES = [
+  "New prospect",
+  "Existing target account",
+  "Existing customer",
+  "Partner",
+  "Unknown"
+] as const;
+
+export type RelationshipType = (typeof RELATIONSHIP_TYPES)[number];
+
+export const CAMPAIGN_GOALS = [
+  "Net-new pipeline",
+  "Expansion",
+  "Product adoption",
+  "Renewal support",
+  "Event follow-up",
+  "Executive awareness",
+  "Education"
+] as const;
+
+export type CampaignGoal = (typeof CAMPAIGN_GOALS)[number];
+
+export type SeedAccount = {
+  name: string;
+  vertical: PlanetVerticalName;
+  relationshipType: RelationshipType;
+  fitNotes: string;
+  personas: string[];
+  accountSignals: string[];
+  suggestedMotions: string[];
+  disqualificationFlags: string[];
+  reviewRequired: boolean;
+};
+
+export type CampaignIdeaRequest = {
+  campaignIdea: string;
+  optionalTargetAccount?: string;
+  relationshipType: RelationshipType;
+  campaignGoal: CampaignGoal;
+};
+
+export type CampaignIdeaStrategy = {
+  campaign_idea_strategy: {
+    campaign_idea: string;
+    optional_target_account: string;
+    relationship_type: RelationshipType;
+    campaign_goal: CampaignGoal;
+    fit_assessment: {
+      recommended_verticals: Array<{
+        vertical: PlanetVerticalName;
+        fit_score: number;
+        why_it_fits: string;
+        confidence: "high" | "medium" | "low";
+      }>;
+      not_recommended_verticals: Array<{
+        vertical: PlanetVerticalName;
+        reason: string;
+      }>;
+      overall_confidence: "high" | "medium" | "low";
+      manual_review_required: boolean;
+    };
+    account_recommendations: Array<{
+      account_name: string;
+      vertical: PlanetVerticalName;
+      relationship_type: RelationshipType;
+      fit_score: number;
+      why_target_this_account: string;
+      suggested_motion: string;
+      review_risk: string;
+    }>;
+    existing_account_strategy: {
+      is_existing_account_motion: boolean;
+      do_not_treat_as_net_new: boolean;
+      recommended_motion:
+        | "expansion"
+        | "adoption"
+        | "renewal_support"
+        | "executive_education"
+        | "event_follow_up"
+        | "account_progression"
+        | "net_new_awareness";
+      relationship_risk_notes: string[];
+      next_best_action: string;
+    };
+    gtm_strategy: {
+      campaign_name: string;
+      campaign_theme: string;
+      primary_message: string;
+      one_line_pitch: string;
+      buyer_pain: string;
+      planet_value: string;
+      business_outcome: string;
+      cta: string;
+      offer: string;
+    };
+    targeting: {
+      best_fit_accounts: string[];
+      primary_personas: string[];
+      secondary_personas: string[];
+      account_signals_to_watch: string[];
+      disqualification_flags: string[];
+    };
+    channel_strategy: {
+      recommended_channels: Array<{
+        channel: string;
+        why_this_channel: string;
+        best_for: string;
+        priority: "high" | "medium" | "low";
+      }>;
+      channels_to_avoid: Array<{
+        channel: string;
+        reason: string;
+      }>;
+    };
+    copy_starters: {
+      landing_page_headline: string;
+      landing_page_subheadline: string;
+      linkedin_ad_copy: string;
+      email_subject_lines: string[];
+      email_body_short: string;
+      sales_handoff_note: string;
+      webinar_or_event_title: string;
+      nurture_sequence_idea: string;
+    };
+    experiment_plan: {
+      hypothesis: string;
+      variant_a_message: string;
+      variant_b_message: string;
+      success_metric: string;
+      guardrail_metric: string;
+      learning_goal: string;
+    };
+    gtm_impact: {
+      how_this_saves_time: string;
+      how_this_improves_lead_quality: string;
+      how_this_improves_sales_handoff: string;
+      primary_kpi: string;
+      secondary_kpis: string[];
+    };
+    review_flags: {
+      human_review_required: boolean;
+      claims_to_validate: string[];
+      safe_to_use_externally: boolean;
+      notes: string[];
+    };
+  };
+};
+
+export type CampaignIdeaEval = {
+  campaign_idea_eval: {
+    idea_to_vertical_fit: number;
+    account_targeting_quality: number;
+    relationship_awareness: number;
+    planet_voice_alignment: number;
+    channel_strategy: number;
+    copy_usefulness: number;
+    gtm_impact: number;
+    safety_and_review_quality: number;
+    total_score: number;
+    max_score: 40;
+    quality_band: "strong" | "usable_with_edits" | "weak" | "unsafe";
+    human_review_required: boolean;
+    top_strengths: string[];
+    top_gaps: string[];
+    specific_improvements: string[];
+    final_recommendation: string;
+  };
+};
+
+export type CampaignIdeaResult = CampaignIdeaStrategy & {
+  campaign_idea_eval: CampaignIdeaEval["campaign_idea_eval"];
+  metadata: {
+    model: string;
+    generated_at: string;
+    fallback_used: boolean;
+    human_review_required: boolean;
+  };
+};

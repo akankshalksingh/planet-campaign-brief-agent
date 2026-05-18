@@ -68,5 +68,47 @@
     "reusable_hooks": ["Validate the Earth intelligence fit before campaign launch.", "Explore adjacent mapping and logistics intelligence.", "Not every account should become a campaign."],
     "proof_points": ["Adjacent to platform education and mapping workflows, not a confirmed vertical fit."],
     "avoid": ["Do not pretend the account is a strong fit.", "Do not classify commercial technology companies as Government and Civil just because they operate in cities."]
+  },
+  {
+    "pattern_name": "Disaster season readiness",
+    "verticals": ["Government and Civil", "Insurance and Risk", "Environmental and Climate"],
+    "hook_type": "See disaster impact faster and prioritize response sooner",
+    "core_message": "Help response, risk, and resilience teams use recurring satellite intelligence for faster damage assessment and resource planning.",
+    "buyer_pains": ["Disaster response teams need current visibility across affected areas.", "Risk and insurance teams need objective pre/post-event evidence.", "Field assessment can be slow, expensive, or unsafe."],
+    "planet_capabilities": ["Daily monitoring", "Pre/post event comparison", "Historical archive", "Damage assessment workflows"],
+    "business_outcomes": ["Faster response planning", "Better claims and damage triage", "Improved resilience planning"],
+    "cta_styles": ["Request a disaster response workflow briefing", "Register for a resilience planning webinar", "Explore damage assessment workflows"],
+    "tone_notes": ["Mission-oriented", "Practical", "Public-sector credible", "Review-gated"],
+    "reusable_hooks": ["See disaster impact faster. Prioritize response sooner.", "Disaster response starts with better ground truth.", "Satellite intelligence for response planning."],
+    "proof_points": ["NASA CSDA access", "NOAA public-sector workflows", "AXA disaster management and risk modeling"],
+    "avoid": ["Do not guarantee response outcomes.", "Do not claim public agency adoption unless sourced."]
+  },
+  {
+    "pattern_name": "Frequency and clarity with SuperRes",
+    "verticals": ["Government and Civil", "Defense and Intelligence", "Environmental and Climate", "Agriculture", "Other / Adjacent / Manual Review"],
+    "hook_type": "Scale high-frequency monitoring without giving up clarity",
+    "core_message": "Position AI-enhanced imagery as a way to support human-in-the-loop monitoring across infrastructure, environment, defense, and agriculture workflows.",
+    "buyer_pains": ["Teams often trade image frequency for clarity.", "Infrastructure and monitoring workflows need broad coverage and sharper context.", "Analysts need confidence layers without manual bottlenecks."],
+    "planet_capabilities": ["SuperRes", "AI-enhanced imagery", "Daily monitoring", "Human-in-the-loop analysis"],
+    "business_outcomes": ["Better technical stakeholder engagement", "Faster monitoring workflows", "Higher confidence in visual analysis"],
+    "cta_styles": ["Register for a SuperRes workflow demo", "See how SuperRes works", "Explore frequency plus clarity"],
+    "tone_notes": ["Technical", "Capability-led but outcome-grounded", "Clear about human review"],
+    "reusable_hooks": ["Frequency and clarity, without the usual tradeoff.", "You do not have to choose between monitoring frequency and image clarity.", "AI-enhanced imagery for human-in-the-loop decisions."],
+    "proof_points": ["SuperRes positioning", "AI-enhanced imagery messaging", "Planet platform education patterns"],
+    "avoid": ["Do not overstate AI autonomy.", "Do not imply classified analysis capability."]
+  },
+  {
+    "pattern_name": "Climate risk evidence layer",
+    "verticals": ["Insurance and Risk", "Environmental and Climate", "Government and Civil"],
+    "hook_type": "Turn climate exposure into objective evidence",
+    "core_message": "Help risk, climate, and public-sector teams monitor environmental change and climate exposure with objective Earth intelligence.",
+    "buyer_pains": ["Climate exposure can be hard to validate at scale.", "Risk teams need objective evidence for modeling and reporting.", "Environmental teams need longitudinal monitoring."],
+    "planet_capabilities": ["Daily imagery", "Historical archive", "Land-use change detection", "Climate and environmental monitoring"],
+    "business_outcomes": ["Better risk evidence", "Improved reporting confidence", "Stronger climate-risk sales handoff"],
+    "cta_styles": ["Download the climate risk monitoring brief", "Explore climate risk evidence", "Join the climate intelligence webinar"],
+    "tone_notes": ["Evidence-led", "Executive-friendly", "Measurable and grounded"],
+    "reusable_hooks": ["Turn climate exposure into objective evidence.", "Make climate risk visible before it becomes irreversible.", "Objective Earth intelligence for risk and resilience."],
+    "proof_points": ["AXA risk modeling", "NICFI deforestation monitoring", "VITO environmental monitoring"],
+    "avoid": ["Do not guarantee regulatory compliance.", "Do not imply unsupported ESG outcomes."]
   }
 ]

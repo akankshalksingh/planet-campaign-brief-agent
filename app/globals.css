@@ -37,7 +37,9 @@ body {
 }
 
 button,
-input {
+input,
+textarea,
+select {
   font: inherit;
 }
 
@@ -92,6 +94,28 @@ main {
 
 .heroCopy {
   align-self: center;
+}
+
+.modeLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.4rem;
+}
+
+.modeLinks a {
+  border: 1px solid rgba(125, 227, 230, 0.18);
+  background: rgba(125, 227, 230, 0.06);
+  color: var(--planet-cyan-soft);
+  padding: 0.62rem 0.75rem;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.modeLinks .activeLink {
+  background: var(--planet-cyan);
+  color: #001314;
 }
 
 .eyebrow {
@@ -206,6 +230,53 @@ main {
   outline: none;
 }
 
+.briefForm textarea,
+.briefForm > input,
+.briefForm select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(125, 227, 230, 0.2);
+  background: #071011;
+  color: var(--planet-text);
+  padding: 0.9rem 1rem;
+  outline: none;
+}
+
+.briefForm textarea {
+  min-height: 8rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.briefForm select {
+  appearance: none;
+}
+
+.briefForm textarea:focus,
+.briefForm > input:focus,
+.briefForm select:focus {
+  border-color: var(--planet-cyan-soft);
+  box-shadow: 0 0 0 3px rgba(0, 157, 165, 0.22);
+}
+
+.campaignIdeaForm {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.campaignIdeaForm label {
+  margin: 0.35rem 0 0;
+}
+
+.campaignIdeaHero {
+  min-height: 92vh;
+}
+
+.campaignIdeaHeroContent {
+  min-height: 92vh;
+  align-items: center;
+}
+
 .inputRow input:focus {
   border-color: var(--planet-cyan-soft);
   box-shadow: 0 0 0 3px rgba(0, 157, 165, 0.22);
@@ -219,6 +290,46 @@ main {
   font-weight: 800;
   padding: 0.95rem 1rem;
   white-space: nowrap;
+}
+
+.segmentedControl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.segmentedControl button,
+.uploadPlaceholder,
+.primarySubmit {
+  border: 1px solid rgba(125, 227, 230, 0.24);
+  background: rgba(125, 227, 230, 0.08);
+  color: var(--planet-cyan-soft);
+  font-weight: 800;
+  padding: 0.62rem 0.7rem;
+}
+
+.segmentedControl .selected,
+.primarySubmit {
+  background: var(--planet-cyan);
+  color: #001314;
+}
+
+.uploadPlaceholder {
+  justify-self: start;
+  margin-top: 0.3rem;
+}
+
+.helperText {
+  margin: -0.25rem 0 0;
+  color: var(--planet-subtle);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.primarySubmit {
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.95rem 1rem;
 }
 
 .exampleBar {
@@ -466,6 +577,50 @@ main {
   border: 1px solid rgba(125, 227, 230, 0.14);
   background: rgba(5, 7, 7, 0.38);
   padding: 0.85rem;
+}
+
+.campaignIdeaResults {
+  margin-top: 2.6rem;
+}
+
+.verticalFitList,
+.accountList,
+.channelList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.verticalFitList div,
+.accountList div,
+.channelList div {
+  border: 1px solid rgba(125, 227, 230, 0.13);
+  background: rgba(5, 7, 7, 0.36);
+  padding: 0.9rem;
+}
+
+.verticalFitList strong,
+.accountList strong,
+.channelList strong {
+  display: block;
+  color: var(--planet-text);
+}
+
+.verticalFitList span,
+.accountList span,
+.channelList span {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--planet-cyan-soft);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.verticalFitList p,
+.accountList p,
+.channelList p {
+  margin: 0.45rem 0 0;
 }
 
 .scoreRow + .scoreRow {
