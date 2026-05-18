@@ -1,0 +1,72 @@
+[
+  {
+    "pattern_name": "Near-daily field intelligence",
+    "verticals": ["Agriculture"],
+    "hook_type": "Catch visible change before it becomes operational loss",
+    "core_message": "Help agriculture teams move from delayed field insight to near-daily crop intelligence.",
+    "buyer_pains": ["Manual scouting cannot cover every field every day.", "Crop stress, disease, irrigation anomalies, and harvest readiness are expensive when detected late.", "Sustainability claims need objective evidence."],
+    "planet_capabilities": ["Near-daily PlanetScope imagery", "Change detection", "Historical archive", "AI-assisted crop monitoring"],
+    "business_outcomes": ["Earlier issue detection", "More scalable scouting", "Better yield and sustainability decisions"],
+    "cta_styles": ["Explore agriculture monitoring", "See crop change earlier", "Scale field intelligence"],
+    "tone_notes": ["Outcome-led", "Agronomic but accessible", "Connects imagery frequency to decisions"],
+    "reusable_hooks": ["See crop change before it becomes crop loss.", "From delayed field insight to near-daily visibility.", "Replace field guesswork with daily crop intelligence."],
+    "proof_points": ["Syngenta Cropwise partnership", "BASF xarvio digital farming use", "Mahindra and FarmQA agriculture examples"],
+    "avoid": ["Do not imply yield gains without evidence.", "Do not claim an active customer relationship unless sourced."]
+  },
+  {
+    "pattern_name": "Maritime awareness beyond traditional signals",
+    "verticals": ["Maritime", "Defense and Intelligence"],
+    "hook_type": "Make activity visible when traditional signals are incomplete",
+    "core_message": "Support maritime and mission teams with persistent monitoring, vessel activity intelligence, and high-resolution tasking.",
+    "buyer_pains": ["AIS can be spoofed or unavailable.", "Wide-area monitoring creates analyst burden.", "Mission planning depends on timely activity changes."],
+    "planet_capabilities": ["Daily satellite imagery", "SkySat tasking", "AI-enabled vessel detection", "Pattern-of-life monitoring"],
+    "business_outcomes": ["Faster anomaly triage", "Wider monitoring coverage", "Improved maritime domain awareness"],
+    "cta_styles": ["Explore maritime intelligence", "Plan with daily visibility", "See activity traditional signals miss"],
+    "tone_notes": ["Precise", "Public and non-sensitive", "Mission-oriented without classified implications"],
+    "reusable_hooks": ["See activity traditional signals miss.", "Maritime awareness beyond AIS.", "Daily visibility for mission-ready decisions."],
+    "proof_points": ["US Navy SeaVision vessel detection", "NATO AI-enhanced surveillance", "SOF Week maritime domain awareness messaging"],
+    "avoid": ["Do not invent classified use cases.", "Do not use operationally sensitive targeting language."]
+  },
+  {
+    "pattern_name": "Risk evidence from satellite truth",
+    "verticals": ["Insurance and Risk", "Environmental and Climate", "Government and Civil"],
+    "hook_type": "Use objective imagery to accelerate risk and response decisions",
+    "core_message": "Help risk, civil, and climate teams compare conditions before and after events and act on objective evidence.",
+    "buyer_pains": ["Field assessment is slow, expensive, and sometimes unsafe.", "Risk models need current and historical observations.", "Disaster response teams need situational awareness across large geographies."],
+    "planet_capabilities": ["Pre/post event imagery", "Daily monitoring", "Historical archive", "Land-use and damage assessment workflows"],
+    "business_outcomes": ["Faster claims triage", "Quicker damage assessment", "Better climate and resilience reporting"],
+    "cta_styles": ["Assess risk with satellite evidence", "See change after an event", "Modernize disaster intelligence"],
+    "tone_notes": ["Evidence-led", "Human-review oriented", "Clear about uncertainty"],
+    "reusable_hooks": ["Settle claims faster with satellite truth.", "Make environmental change visible before it becomes irreversible.", "Satellite intelligence on a software budget."],
+    "proof_points": ["AXA disaster management and risk modeling", "Norway NICFI deforestation monitoring", "NASA CSDA and NOAA public-sector access"],
+    "avoid": ["Do not guarantee claim outcomes.", "Do not imply regulatory compliance without customer-specific evidence."]
+  },
+  {
+    "pattern_name": "From satellite data to decision-ready insight",
+    "verticals": ["Finance and Commodities", "Government and Civil", "Environmental and Climate"],
+    "hook_type": "Move users from managing geospatial data to finding answers",
+    "core_message": "Turn high-frequency Earth observation into decision-ready signals for analysts, operators, and researchers.",
+    "buyer_pains": ["Raw imagery and data pipelines can overwhelm teams.", "Analysts need timely indicators before slow official data arrives.", "Operational users need insight where decisions happen."],
+    "planet_capabilities": ["Planet APIs", "Cloud delivery", "Historical archive", "Daily monitoring", "AI-enhanced imagery"],
+    "business_outcomes": ["Faster analysis", "Cleaner workflow integration", "Earlier economic or environmental signals"],
+    "cta_styles": ["Move from data to decisions", "Build with Planet data", "Find answers faster"],
+    "tone_notes": ["Technical but clear", "Workflow-focused", "Outcome-led rather than feature-heavy"],
+    "reusable_hooks": ["From satellite data to decision-ready insight.", "Move from managing files to finding answers.", "Your data, delivered where decisions happen."],
+    "proof_points": ["Planet Insights Platform themes", "API and cloud-delivery messaging", "Alternative data use cases"],
+    "avoid": ["Do not imply investment performance.", "Do not overstate automation replacing human analysis."]
+  },
+  {
+    "pattern_name": "Adjacent account exploration",
+    "verticals": ["Other / Adjacent / Manual Review"],
+    "hook_type": "Identify possible Earth intelligence use cases without overstating fit",
+    "core_message": "Use conservative account research to explore whether a commercial or adjacent company has a credible Planet use case.",
+    "buyer_pains": ["Potential use cases are indirect or unvalidated.", "The account may not match an approved MVP vertical.", "Sales and marketing need a clear review gate before outreach."],
+    "planet_capabilities": ["Mapping and infrastructure change monitoring", "Logistics and disruption intelligence", "Historical archive", "Daily monitoring"],
+    "business_outcomes": ["Better prioritization", "Reduced misrouting", "Safer campaign exploration"],
+    "cta_styles": ["Validate adjacent fit", "Explore mapping and infrastructure intelligence", "Review account fit"],
+    "tone_notes": ["Conservative", "Explicitly review-gated", "No forced vertical confidence"],
+    "reusable_hooks": ["Validate the Earth intelligence fit before campaign launch.", "Explore adjacent mapping and logistics intelligence.", "Not every account should become a campaign."],
+    "proof_points": ["Adjacent to platform education and mapping workflows, not a confirmed vertical fit."],
+    "avoid": ["Do not pretend the account is a strong fit.", "Do not classify commercial technology companies as Government and Civil just because they operate in cities."]
+  }
+]

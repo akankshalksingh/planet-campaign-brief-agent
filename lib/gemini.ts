@@ -1,6 +1,6 @@
 import { extractJsonObject } from "@/lib/json";
 
-const MODEL = process.env.GEMINI_MODEL ?? "gemini-1.5-flash";
+const MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
 
 type GeminiPart = {
   text?: string;

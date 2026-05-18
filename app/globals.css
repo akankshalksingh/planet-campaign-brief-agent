@@ -300,8 +300,8 @@ main {
 .resultHero h2,
 .primaryPanel h3 {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 4rem);
-  line-height: 1;
+  font-size: clamp(1.8rem, 3.4vw, 3.4rem);
+  line-height: 1.05;
   letter-spacing: 0;
 }
 
@@ -345,6 +345,127 @@ main {
 
 .primaryPanel {
   border-color: rgba(125, 227, 230, 0.34);
+}
+
+.warningPanel {
+  border-color: rgba(244, 201, 93, 0.5);
+}
+
+.warningPanel h3 {
+  color: var(--planet-warning);
+}
+
+.panel h3 {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 1.2rem;
+  line-height: 1.25;
+}
+
+.mutedText {
+  color: var(--planet-subtle);
+}
+
+.miniMetrics,
+.tagList,
+.variantGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.miniMetrics span,
+.tagList span {
+  border: 1px solid rgba(125, 227, 230, 0.18);
+  background: rgba(125, 227, 230, 0.06);
+  color: var(--planet-cyan-soft);
+  padding: 0.42rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.bulletList {
+  margin: 0.85rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--planet-muted);
+  line-height: 1.6;
+}
+
+.bulletList li + li {
+  margin-top: 0.35rem;
+}
+
+.campaignCallout {
+  margin-top: 1rem;
+  border-left: 3px solid var(--planet-cyan);
+  background: rgba(125, 227, 230, 0.08);
+  padding: 0.85rem 1rem;
+}
+
+.campaignCallout span,
+.copyBlock span,
+.variantGrid span,
+.detailList dt {
+  display: block;
+  color: var(--planet-cyan-soft);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.campaignCallout strong,
+.copyBlock strong,
+.variantGrid strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--planet-text);
+}
+
+.detailList {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+}
+
+.detailList div {
+  border-top: 1px solid rgba(125, 227, 230, 0.12);
+  padding-top: 0.8rem;
+}
+
+.detailList dd {
+  margin: 0.35rem 0 0;
+  color: var(--planet-muted);
+  line-height: 1.55;
+}
+
+.copyPanel {
+  grid-column: 1 / -1;
+}
+
+.copyBlock {
+  border: 1px solid rgba(125, 227, 230, 0.13);
+  background: rgba(5, 7, 7, 0.36);
+  padding: 0.95rem;
+}
+
+.copyBlock + .copyBlock {
+  margin-top: 0.75rem;
+}
+
+.copyBlock p {
+  margin: 0.45rem 0 0;
+}
+
+.variantGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.variantGrid div {
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(5, 7, 7, 0.38);
+  padding: 0.85rem;
 }
 
 .scoreRow + .scoreRow {
@@ -468,7 +589,8 @@ main {
   }
 
   .inputRow,
-  .metrics {
+  .metrics,
+  .variantGrid {
     grid-template-columns: 1fr;
   }
 

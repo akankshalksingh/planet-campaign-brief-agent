@@ -5,7 +5,7 @@ import { BriefView } from "@/app/components/BriefView";
 import { OrbitField } from "@/app/components/OrbitField";
 import { CampaignBrief } from "@/lib/types";
 
-const examples = ["Syngenta", "Lockheed Martin", "AXA", "Port of Rotterdam", "FEMA", "BlackRock"];
+const examples = ["Syngenta", "AXA", "Port of Rotterdam", "NASA", "Lockheed Martin", "Uber", "Apple"];
 
 export default function Home() {
   const [companyName, setCompanyName] = useState("Syngenta");
@@ -49,7 +49,7 @@ export default function Home() {
             <h1>Account intelligence for Planet campaign teams.</h1>
             <p>
               Research a target account, classify its best-fit Planet vertical, retrieve approved
-              messaging, and generate a review-ready campaign brief.
+              messaging, and generate a review-ready campaign strategy with copy starters and KPIs.
             </p>
           </div>
           <form className="briefForm" onSubmit={handleSubmit}>
@@ -110,8 +110,8 @@ export default function Home() {
           </div>
           <div>
             <span>03</span>
-            <strong>Evaluate</strong>
-            <p>LLM-as-judge scores relevance, specificity, groundedness, and actionability.</p>
+            <strong>Create</strong>
+            <p>Generate campaign angles, copy starters, audiences, experiments, and KPIs.</p>
           </div>
           <div>
             <span>04</span>

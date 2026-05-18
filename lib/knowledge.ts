@@ -1,7 +1,9 @@
 import verticals from "@/data/planet-verticals.json";
-import { PlanetVertical, PlanetVerticalName, VERTICALS } from "@/lib/types";
+import campaignPatterns from "@/data/planet-campaign-patterns.json";
+import { CampaignPattern, PlanetVertical, PlanetVerticalName, VERTICALS } from "@/lib/types";
 
 const documents = verticals as PlanetVertical[];
+const patterns = campaignPatterns as CampaignPattern[];
 
 const tokenize = (value: string) =>
   value
@@ -31,6 +33,16 @@ export function getVertical(name: PlanetVerticalName) {
 }
 
 export function retrievePlanetContext(query: string, detectedVertical?: PlanetVerticalName) {
+  if (detectedVertical === "Other / Adjacent / Manual Review") {
+    return documents
+      .filter((item) =>
+        ["Government and Civil", "Finance and Commodities", "Environmental and Climate"].includes(
+          item.vertical
+        )
+      )
+      .slice(0, 2);
+  }
+
   const queryTerms = new Set(tokenize(`${query} ${detectedVertical ?? ""}`));
 
   const ranked = documents
@@ -58,6 +70,32 @@ Proof points: ${item.proof_points.join(" ")}
 Messaging angle: ${item.messaging_angle}
 KPIs: ${item.kpis.join(", ")}
 Risk guidance: ${item.risk_guidance}`
+    )
+    .join("\n\n");
+}
+
+export function retrieveCampaignPatterns(detectedVertical: PlanetVerticalName) {
+  const directMatches = patterns.filter((pattern) => pattern.verticals.includes(detectedVertical));
+
+  if (directMatches.length) return directMatches.slice(0, 2);
+
+  return patterns.filter((pattern) => pattern.verticals.includes("Other / Adjacent / Manual Review"));
+}
+
+export function formatCampaignPatterns(items: CampaignPattern[]) {
+  return items
+    .map(
+      (item) => `Pattern: ${item.pattern_name}
+Hook type: ${item.hook_type}
+Core message: ${item.core_message}
+Buyer pains: ${item.buyer_pains.join(", ")}
+Planet capabilities: ${item.planet_capabilities.join(", ")}
+Business outcomes: ${item.business_outcomes.join(", ")}
+CTA styles: ${item.cta_styles.join(", ")}
+Tone notes: ${item.tone_notes.join(", ")}
+Reusable hooks: ${item.reusable_hooks.join(" ")}
+Proof points: ${item.proof_points.join(" ")}
+Avoid: ${item.avoid.join(" ")}`
     )
     .join("\n\n");
 }
