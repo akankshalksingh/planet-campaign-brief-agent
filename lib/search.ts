@@ -76,27 +76,45 @@ function normalizeCompany(companyName: string) {
   return companyName.toLowerCase().trim();
 }
 
+async function readJson<T>(response: Response): Promise<T | null> {
+  const text = await response.text();
+  if (!text) return null;
+
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
 async function searchWithTavily(companyName: string): Promise<SearchSnippet[]> {
   const apiKey = process.env.TAVILY_API_KEY;
   if (!apiKey) return [];
 
-  const response = await fetch("https://api.tavily.com/search", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      api_key: apiKey,
-      query: `${companyName} company overview industry recent business signals`,
-      search_depth: "basic",
-      max_results: 5,
-      include_answer: true
-    })
-  });
+  const response = await fetch(
+    "https://api.tavily.com/search",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        api_key: apiKey,
+        query: `${companyName} company overview industry recent business signals`,
+        search_depth: "basic",
+        max_results: 5,
+        include_answer: true
+      })
+    }
+  ).catch(() => null);
+
+  if (!response) return [];
 
   if (!response.ok) return [];
 
-  const payload = (await response.json()) as TavilyResponse;
+  const payload = await readJson<TavilyResponse>(response);
+  if (!payload) return [];
+
   return (payload.results ?? []).slice(0, 5).map((item) => ({
     title: item.title ?? "Search result",
     url: item.url ?? "#",
@@ -117,11 +135,15 @@ async function searchWithDuckDuckGo(companyName: string): Promise<SearchSnippet[
       Accept: "application/json"
     },
     next: { revalidate: 3600 }
-  });
+  }).catch(() => null);
+
+  if (!response) return [];
 
   if (!response.ok) return [];
 
-  const payload = (await response.json()) as DuckDuckGoResponse;
+  const payload = await readJson<DuckDuckGoResponse>(response);
+  if (!payload) return [];
+
   const snippets: SearchSnippet[] = [];
 
   if (payload.AbstractText) {

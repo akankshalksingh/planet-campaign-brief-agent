@@ -1,6 +1,6 @@
 import { extractJsonObject } from "@/lib/json";
 
-const MODEL = "gemini-1.5-flash";
+const MODEL = process.env.GEMINI_MODEL ?? "gemini-1.5-flash";
 
 type GeminiPart = {
   text?: string;
@@ -35,24 +35,38 @@ export async function generateJson(prompt: string) {
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.25,
-          responseMimeType: "application/json"
+          responseMimeType: "application/json",
+          maxOutputTokens: 2048
         }
       })
     }
   );
 
-  const payload = (await response.json()) as GeminiResponse;
+  const responseText = await response.text();
+  let payload: GeminiResponse;
+
+  try {
+    payload = responseText ? (JSON.parse(responseText) as GeminiResponse) : {};
+  } catch {
+    throw new Error(
+      `Gemini returned a non-JSON response (${response.status}). Check the API key and model access.`
+    );
+  }
 
   if (!response.ok) {
-    throw new Error(payload.error?.message ?? "Gemini request failed.");
+    throw new Error(payload.error?.message ?? `Gemini request failed with status ${response.status}.`);
   }
 
   const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
   if (!text) {
-    throw new Error("Gemini returned an empty response.");
+    throw new Error("Gemini returned an empty model response.");
   }
 
-  return extractJsonObject(text);
+  try {
+    return extractJsonObject(text);
+  } catch {
+    throw new Error("Gemini returned malformed JSON. Please regenerate the brief.");
+  }
 }
 
 export { MODEL as GEMINI_MODEL };
