@@ -89,11 +89,6 @@ export function BriefView({ brief }: { brief: CampaignBrief }) {
           ))}
         </div>
       </article>
-
-      <details className="jsonPanel">
-        <summary>Structured JSON</summary>
-        <pre>{JSON.stringify(brief, null, 2)}</pre>
-      </details>
     </section>
   );
 }

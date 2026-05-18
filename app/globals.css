@@ -56,7 +56,7 @@ main {
 
 .hero {
   position: relative;
-  min-height: 86vh;
+  min-height: 74vh;
   overflow: hidden;
   border-bottom: 1px solid rgba(125, 227, 230, 0.16);
 }
@@ -65,29 +65,33 @@ main {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, 520px);
-  gap: 4rem;
-  align-items: end;
-  min-height: 86vh;
+  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 540px);
+  gap: 5rem;
+  align-items: center;
+  min-height: 74vh;
   width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 7rem 0 5rem;
+  padding: 5rem 0 4rem;
 }
 
 .hero h1 {
-  max-width: 760px;
+  max-width: 700px;
   margin: 0;
-  font-size: clamp(3.2rem, 7vw, 6.8rem);
-  line-height: 0.95;
+  font-size: clamp(3rem, 5.4vw, 5.6rem);
+  line-height: 1;
   letter-spacing: 0;
 }
 
 .hero p {
-  max-width: 680px;
+  max-width: 620px;
   margin: 1.25rem 0 0;
   color: var(--planet-muted);
-  font-size: 1.08rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.heroCopy {
+  align-self: center;
 }
 
 .eyebrow {
@@ -167,14 +171,14 @@ main {
 
 .coordinateTwo {
   right: 34%;
-  bottom: 28%;
+  bottom: 18%;
 }
 
 .briefForm {
   border: 1px solid var(--planet-card-border);
-  background: rgba(14, 21, 22, 0.78);
+  background: rgba(14, 21, 22, 0.88);
   backdrop-filter: blur(18px);
-  padding: 1.15rem;
+  padding: 1.35rem;
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
 }
 
@@ -214,6 +218,7 @@ main {
   color: #001314;
   font-weight: 800;
   padding: 0.95rem 1rem;
+  white-space: nowrap;
 }
 
 .exampleBar {
@@ -249,7 +254,6 @@ main {
 .workflowBand div,
 .panel,
 .resultHero,
-.jsonPanel,
 .errorPanel,
 .loadingPanel {
   background: rgba(14, 21, 22, 0.88);
@@ -333,7 +337,6 @@ main {
 }
 
 .panel,
-.jsonPanel,
 .errorPanel,
 .loadingPanel {
   border: 1px solid var(--planet-card-border);
@@ -404,26 +407,6 @@ main {
   font-size: 0.9rem;
 }
 
-.jsonPanel {
-  grid-column: 1 / -1;
-}
-
-.jsonPanel summary {
-  color: var(--planet-cyan-soft);
-  cursor: pointer;
-  font-weight: 800;
-}
-
-.jsonPanel pre {
-  overflow: auto;
-  max-height: 34rem;
-  margin: 1rem 0 0;
-  color: #d8f7f8;
-  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
-  font-size: 0.78rem;
-  line-height: 1.55;
-}
-
 .errorPanel {
   border-color: rgba(255, 107, 95, 0.45);
 }
@@ -473,8 +456,10 @@ main {
   }
 
   .heroContent {
-    align-items: end;
+    align-items: center;
     gap: 2rem;
+    min-height: auto;
+    padding: 4rem 0 3rem;
   }
 
   .workflowBand,
@@ -488,6 +473,12 @@ main {
   }
 
   .hero h1 {
-    font-size: 3.2rem;
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .heroContent {
+    width: min(1280px, calc(100% - 4rem));
   }
 }

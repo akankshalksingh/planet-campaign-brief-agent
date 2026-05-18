@@ -44,13 +44,12 @@ export default function Home() {
       <section className="hero">
         <OrbitField />
         <div className="heroContent">
-          <div>
+          <div className="heroCopy">
             <p className="eyebrow">Planet GTM intelligence</p>
-            <h1>From account signal to campaign brief in minutes.</h1>
+            <h1>Account intelligence for Planet campaign teams.</h1>
             <p>
-              A grounded campaign workflow that researches a company, detects the best-fit Planet
-              vertical, retrieves approved messaging, generates a structured brief, and scores the
-              output before human review.
+              Research a target account, classify its best-fit Planet vertical, retrieve approved
+              messaging, and generate a review-ready campaign brief.
             </p>
           </div>
           <form className="briefForm" onSubmit={handleSubmit}>
@@ -117,7 +116,7 @@ export default function Home() {
           <div>
             <span>04</span>
             <strong>Review</strong>
-            <p>Risk flags and structured JSON keep the workflow human-approved.</p>
+            <p>Risk flags and quality scores keep the workflow human-approved.</p>
           </div>
         </section>
       ) : null}
