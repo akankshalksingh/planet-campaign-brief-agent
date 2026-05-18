@@ -1,0 +1,72 @@
+[
+  {
+    "vertical": "Agriculture",
+    "icp_examples": ["Syngenta", "BASF xarvio", "FarmQA", "Mahindra agriculture initiatives", "precision farming platforms", "agtech companies"],
+    "customer_pain": "Farmers and agtech companies need to monitor crop health, detect disease and pests early, predict yield, and prove sustainability claims across large farm networks where manual field inspection does not scale.",
+    "how_planet_helps": "Planet's near-daily PlanetScope imagery gives agriculture teams field-level visibility at scale. Change detection can identify crop stress, disease spread, irrigation anomalies, and harvest readiness. Historical imagery supports yield prediction and trend analysis across seasons.",
+    "proof_points": ["Syngenta expanded its Planet partnership so farmers could access near-daily imagery through Cropwise.", "BASF xarvio has used Planet data for digital farming insights.", "Planet public posts highlight agriculture monitoring, FarmQA, Mahindra sugarcane use cases, and AI-powered agriculture monitoring."],
+    "messaging_angle": "Planet turns satellite data into agronomic decisions.",
+    "kpis": ["crop loss reduction", "yield prediction accuracy", "field monitoring cost", "claim validation speed", "scout efficiency", "acres monitored per analyst"],
+    "risk_guidance": "Validate whether the account already has a Planet relationship before using net-new acquisition messaging."
+  },
+  {
+    "vertical": "Defense and Intelligence",
+    "icp_examples": ["Lockheed Martin", "NATO", "NGA", "defense contractors", "government intelligence agencies", "armed services", "maritime security agencies"],
+    "customer_pain": "Defense and intelligence customers need persistent, wide-area monitoring of strategic zones, early warning of activity changes, scalable imagery analysis, and analyst workflows that do not depend only on manual review.",
+    "how_planet_helps": "Planet provides daily global coverage of strategic areas. AI-enabled change detection can flag anomalies automatically. SkySat and Pelican provide high-resolution tasking for priority areas.",
+    "proof_points": ["US Navy SeaVision contract for vessel detection and monitoring.", "NATO AI-enhanced surveillance.", "NGA Luno B program award.", "International defense customer renewal."],
+    "messaging_angle": "See everything, every day, without analyst bottlenecks.",
+    "kpis": ["analyst review time", "detection latency", "area monitored", "tasking response time", "anomaly triage speed", "mission planning efficiency"],
+    "risk_guidance": "Never invent or imply classified use cases. Keep messaging at the level of public, approved, non-sensitive capabilities."
+  },
+  {
+    "vertical": "Insurance and Risk",
+    "icp_examples": ["AXA", "Munich Re", "Swiss Re", "insurtech platforms", "catastrophe modeling firms", "climate risk analytics platforms"],
+    "customer_pain": "Insurers need objective, near-real-time evidence for claims, pre-event risk scoring, post-disaster damage assessment, and climate risk modeling across large geographies.",
+    "how_planet_helps": "Planet's daily imagery enables rapid pre-event and post-event comparison. The historical archive supports baseline risk models. Satellite evidence can improve damage assessment, disaster response, wildfire monitoring, drought monitoring, flood exposure analysis, and claims triage.",
+    "proof_points": ["AXA partnership for disaster management and risk modeling.", "Climate disclosure and environmental risk mandates increase the need for objective evidence."],
+    "messaging_angle": "Settle claims faster with satellite truth.",
+    "kpis": ["claims processing time", "assessment accuracy", "loss adjustment expense", "field visit reduction", "time to first damage estimate", "risk model improvement"],
+    "risk_guidance": "Validate existing partner or customer status before treating the account as net-new."
+  },
+  {
+    "vertical": "Environmental and Climate",
+    "icp_examples": ["conservation NGOs", "sustainability consultancies", "ESG reporting platforms", "government environmental agencies", "VITO", "forestry and land-use organizations"],
+    "customer_pain": "Environmental organizations need to monitor deforestation, biodiversity loss, illegal mining, habitat change, land-use change, water stress, carbon sequestration, and greenhouse gas risk at global scale.",
+    "how_planet_helps": "Planet's daily global coverage enables near-real-time deforestation alerts, habitat monitoring, land-use change detection, and long-term trend analysis. Tanager satellites add methane and greenhouse gas monitoring. Historical imagery enables climate and biodiversity reporting over time.",
+    "proof_points": ["VITO long-term partnership around agriculture, environment, and biodiversity.", "Norway NICFI deforestation monitoring program.", "FAO ecosystem monitoring framework."],
+    "messaging_angle": "Make environmental change visible before it becomes irreversible.",
+    "kpis": ["deforestation alert latency", "acres monitored", "reporting confidence", "biodiversity risk indicators", "land-use change detection accuracy", "carbon reporting support"],
+    "risk_guidance": "Avoid overstating regulatory or disclosure outcomes without customer-specific evidence."
+  },
+  {
+    "vertical": "Maritime",
+    "icp_examples": ["Port of Rotterdam", "shipping companies", "coast guards", "maritime intelligence firms", "fishing regulators", "naval and maritime security teams"],
+    "customer_pain": "Maritime operators need to track vessel activity across large ocean areas, detect illegal fishing, identify dark vessels, monitor port congestion, and support supply chain visibility without depending only on AIS signals.",
+    "how_planet_helps": "PlanetScope and SkySat support wide-area maritime monitoring. AI-enabled vessel detection can identify vessels when AIS is unavailable or unreliable. Historical imagery supports pattern-of-life analysis and anomaly detection.",
+    "proof_points": ["US Navy SeaVision contract renewal for vessel detection and monitoring across the Pacific.", "Planet public posts highlight SOF Week and maritime domain awareness."],
+    "messaging_angle": "See every vessel, even the ones that do not want to be seen.",
+    "kpis": ["dark vessel detection rate", "port activity visibility", "monitoring coverage", "analyst triage time", "illegal fishing detection speed", "supply chain disruption signals"],
+    "risk_guidance": "For naval accounts, keep all claims public and non-sensitive."
+  },
+  {
+    "vertical": "Finance and Commodities",
+    "icp_examples": ["BlackRock", "hedge funds", "commodity traders", "economic research firms", "supply chain intelligence platforms", "alternative data teams", "macro research teams"],
+    "customer_pain": "Financial analysts need alternative data to understand commodity production, supply chain disruptions, infrastructure activity, agricultural output, and economic movement before official statistics are released.",
+    "how_planet_helps": "Planet's daily imagery over farms, mines, ports, industrial sites, construction zones, and logistics hubs can provide leading indicators of economic activity. The historical archive helps analysts build time-series models around visible real-world change.",
+    "proof_points": ["Finance and commodities are listed as key Planet customer verticals.", "Hedge funds and research firms use satellite data as alternative data."],
+    "messaging_angle": "Economic intelligence before the official numbers.",
+    "kpis": ["forecast accuracy", "signal lead time", "data latency", "portfolio insight quality", "commodity production estimate accuracy", "supply chain disruption detection"],
+    "risk_guidance": "Avoid implying investment performance or proprietary trading signals."
+  },
+  {
+    "vertical": "Government and Civil",
+    "icp_examples": ["FEMA", "NOAA", "NASA", "municipal governments", "disaster response agencies", "urban planning departments", "public infrastructure agencies"],
+    "customer_pain": "Government and civil agencies need situational awareness across large geographies for disaster response, infrastructure monitoring, urban planning, environmental compliance, and public safety while budgets and field teams are limited.",
+    "how_planet_helps": "Planet provides recurring access to satellite imagery without requiring agencies to operate their own satellites. Agencies can use Planet for rapid damage assessment, rescue prioritization, infrastructure monitoring, construction tracking, road and utility monitoring, and long-term planning.",
+    "proof_points": ["NASA CSDA program access.", "NOAA contract.", "Civil government contracts and use cases."],
+    "messaging_angle": "Satellite intelligence on a software budget.",
+    "kpis": ["response time", "cost versus satellite ownership", "damage assessment speed", "field visit reduction", "infrastructure monitoring coverage", "public-service prioritization speed"],
+    "risk_guidance": "Be clear that the brief is for human review, not automated public-sector action."
+  }
+]
