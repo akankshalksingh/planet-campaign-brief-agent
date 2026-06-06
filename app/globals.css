@@ -873,6 +873,18 @@ main {
   text-decoration: none;
 }
 
+.filterBar .selected {
+  background: var(--planet-cyan);
+  color: #001314;
+}
+
+.filterResultCount {
+  width: min(1180px, calc(100% - 2rem));
+  margin: -1rem auto 1rem;
+  color: var(--planet-muted);
+  font-size: 0.9rem;
+}
+
 .primaryLink {
   display: inline-flex;
   justify-content: center;

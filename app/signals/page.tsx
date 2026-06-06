@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { leadSignals } from "@/lib/signals";
 
 const filters = [
@@ -11,12 +14,27 @@ const filters = [
   "Website intent",
   "Webinar",
   "Paid media"
-];
+] as const;
+
+type SignalFilter = (typeof filters)[number];
 
 const highConfidence = leadSignals.filter((signal) => signal.confidence === "High" || signal.confidence === "Very High");
 const needsReview = leadSignals.filter((signal) => signal.status === "Needs Enrichment" || signal.status === "Manual Review");
 const salesReady = leadSignals.filter((signal) => signal.status === "Sales Ready");
 const nurtureOnly = leadSignals.filter((signal) => signal.status === "Nurture Only");
+
+function matchesFilter(signal: (typeof leadSignals)[number], filter: SignalFilter) {
+  if (filter === "All") return true;
+  if (filter === "High confidence") return signal.confidence === "High" || signal.confidence === "Very High";
+  if (filter === "Needs review") return signal.status === "Needs Enrichment" || signal.status === "Manual Review";
+  if (filter === "Sales-ready") return signal.status === "Sales Ready";
+  if (filter === "Event leads") return signal.source.includes("Event") || signal.source.includes("SplashThat") || signal.source.includes("CSV");
+  if (filter === "Product usage") return signal.source === "Product Freemium App";
+  if (filter === "Website intent") return signal.source === "Marketo Web Activity" || signal.source === "Website Demo Form";
+  if (filter === "Webinar") return signal.source === "Webinar Attendance" || signal.source === "Salesforce Campaign Member";
+  if (filter === "Paid media") return signal.source === "LinkedIn Paid" || signal.source === "Google Ads" || signal.source === "Organic Social";
+  return true;
+}
 
 function SignalCard({ signal }: { signal: (typeof leadSignals)[number] }) {
   return (
@@ -48,6 +66,9 @@ function SignalCard({ signal }: { signal: (typeof leadSignals)[number] }) {
 }
 
 export default function SignalInboxPage() {
+  const [activeFilter, setActiveFilter] = useState<SignalFilter>("All");
+  const filteredSignals = leadSignals.filter((signal) => matchesFilter(signal, activeFilter));
+
   return (
     <main>
       <section className="signalHero">
@@ -77,11 +98,25 @@ export default function SignalInboxPage() {
       </section>
 
       <section className="filterBar" aria-label="Signal filters">
-        {filters.map((filter) => <button type="button" key={filter}>{filter}</button>)}
+        {filters.map((filter) => (
+          <button
+            type="button"
+            key={filter}
+            className={activeFilter === filter ? "selected" : ""}
+            onClick={() => setActiveFilter(filter)}
+            aria-pressed={activeFilter === filter}
+          >
+            {filter}
+          </button>
+        ))}
+      </section>
+
+      <section className="filterResultCount">
+        <p>{filteredSignals.length} signal{filteredSignals.length === 1 ? "" : "s"} shown for {activeFilter}.</p>
       </section>
 
       <section className="signalGrid">
-        {leadSignals.map((signal) => <SignalCard key={signal.id} signal={signal} />)}
+        {filteredSignals.map((signal) => <SignalCard key={signal.id} signal={signal} />)}
       </section>
     </main>
   );
