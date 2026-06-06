@@ -53,9 +53,11 @@ export default function Home() {
               messaging, and generate a review-ready campaign strategy with copy starters and KPIs.
             </p>
             <div className="modeLinks">
-              <Link href="/" className="activeLink">Account Brief</Link>
-              <Link href="/campaign-idea">Campaign Idea Mapper</Link>
-              <Link href="/campaign-builder">Campaign Builder</Link>
+              <Link href="/signals">1. Signals</Link>
+              <Link href="/" className="activeLink">2. Account</Link>
+              <Link href="/campaign-idea">3. Ideas</Link>
+              <Link href="/campaign-builder">4. Build</Link>
+              <Link href="/attribution-review">5. Review</Link>
             </div>
           </div>
           <form className="briefForm" onSubmit={handleSubmit}>

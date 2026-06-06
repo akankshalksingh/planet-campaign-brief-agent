@@ -349,7 +349,13 @@ main {
 .workflowBand,
 .resultGrid,
 .errorPanel,
-.loadingPanel {
+.loadingPanel,
+.signalHero,
+.signalSummary,
+.filterBar,
+.signalGrid,
+.signalDetailHero,
+.signalActionBand {
   width: min(1180px, calc(100% - 2rem));
   margin: 2rem auto;
 }
@@ -798,6 +804,195 @@ main {
   margin-top: 0.75rem;
 }
 
+.signalHero {
+  padding: 4rem 0 1rem;
+}
+
+.signalHero h1,
+.signalDetailHero h1 {
+  max-width: 780px;
+  margin: 0;
+  font-size: clamp(3rem, 6vw, 5.8rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.signalHero p,
+.signalDetailHero p,
+.signalActionBand p {
+  max-width: 760px;
+  color: var(--planet-muted);
+  line-height: 1.65;
+}
+
+.workflowNav {
+  margin-top: 1.5rem;
+}
+
+.signalSummary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--planet-card-border);
+  background: var(--planet-card-border);
+}
+
+.signalSummary div {
+  background: rgba(14, 21, 22, 0.88);
+  padding: 1rem;
+}
+
+.signalSummary span {
+  display: block;
+  color: var(--planet-cyan-soft);
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.signalSummary strong {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--planet-muted);
+  font-size: 0.84rem;
+  text-transform: uppercase;
+}
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filterBar button,
+.primaryLink {
+  border: 1px solid rgba(125, 227, 230, 0.24);
+  background: rgba(125, 227, 230, 0.08);
+  color: var(--planet-cyan-soft);
+  font-weight: 800;
+  padding: 0.62rem 0.75rem;
+  text-decoration: none;
+}
+
+.primaryLink {
+  display: inline-flex;
+  justify-content: center;
+  margin-top: 1rem;
+  background: var(--planet-cyan);
+  color: #001314;
+}
+
+.signalGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.signalCard,
+.signalActionBand {
+  border: 1px solid var(--planet-card-border);
+  background: rgba(14, 21, 22, 0.88);
+  padding: 1rem;
+}
+
+.signalCard.manualReview {
+  border-color: rgba(244, 201, 93, 0.52);
+}
+
+.signalCardHeader,
+.signalDetailHero,
+.signalActionBand {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.signalCard h3 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.signalCard p {
+  color: var(--planet-muted);
+  line-height: 1.55;
+}
+
+.intentBadge {
+  width: 4.5rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(125, 227, 230, 0.28);
+  background: rgba(0, 157, 165, 0.12);
+}
+
+.intentBadge strong {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.intentBadge span,
+.signalMeta dt,
+.timelineList span {
+  color: var(--planet-cyan-soft);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.signalMeta {
+  display: grid;
+  gap: 0.55rem;
+  margin: 1rem 0 0;
+}
+
+.signalMeta div {
+  border-top: 1px solid rgba(125, 227, 230, 0.12);
+  padding-top: 0.55rem;
+}
+
+.signalMeta dd {
+  margin: 0.25rem 0 0;
+  color: var(--planet-muted);
+}
+
+.signalDetailHero {
+  padding-top: 3.5rem;
+}
+
+.timelineList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.timelineList div {
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(5, 7, 7, 0.38);
+  padding: 0.85rem;
+}
+
+.timelineList strong,
+.timelineList em {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+.timelineList em {
+  color: var(--planet-subtle);
+  font-size: 0.8rem;
+  font-style: normal;
+}
+
+.ideaCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.ideaCard .primaryLink {
+  margin-top: auto;
+}
+
 .evidenceList {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -875,7 +1070,11 @@ main {
 @media (max-width: 880px) {
   .heroContent,
   .resultHero,
-  .resultGrid {
+  .resultGrid,
+  .signalGrid,
+  .signalDetailHero,
+  .signalCardHeader,
+  .signalActionBand {
     grid-template-columns: 1fr;
   }
 
@@ -887,6 +1086,7 @@ main {
   }
 
   .workflowBand,
+  .signalSummary,
   .evidenceList,
   .builderChannels,
   .checklistGrid,

@@ -9,6 +9,7 @@ import {
   LIFECYCLE_STAGES,
   SALES_MOTIONS
 } from "@/lib/campaign-builder/schemas";
+import { buildCampaignInputFromSignal, getSignalById } from "@/lib/signals";
 import { VERTICALS } from "@/lib/types";
 
 const demoInput = {
@@ -304,7 +305,12 @@ function CampaignBuilderResults({
 }
 
 export default function CampaignBuilderPage() {
-  const [form, setForm] = useState(demoInput);
+  const [form, setForm] = useState(() => {
+    if (typeof window === "undefined") return demoInput;
+    const params = new URLSearchParams(window.location.search);
+    const signal = getSignalById(params.get("signal") ?? "");
+    return signal ? buildCampaignInputFromSignal(signal, params.get("idea") ?? undefined) : demoInput;
+  });
   const [result, setResult] = useState<CampaignBuilderOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -363,9 +369,11 @@ export default function CampaignBuilderPage() {
               launch checklist items, and human review flags before anything goes live.
             </p>
             <div className="modeLinks">
-              <Link href="/">Account Brief</Link>
-              <Link href="/campaign-idea">Campaign Idea Mapper</Link>
-              <Link href="/campaign-builder" className="activeLink">Campaign Builder</Link>
+              <Link href="/signals">1. Signals</Link>
+              <Link href="/">2. Account</Link>
+              <Link href="/campaign-idea">3. Ideas</Link>
+              <Link href="/campaign-builder" className="activeLink">4. Build</Link>
+              <Link href="/attribution-review">5. Review</Link>
             </div>
           </div>
 

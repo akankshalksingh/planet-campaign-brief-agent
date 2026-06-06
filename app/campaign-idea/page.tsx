@@ -279,9 +279,11 @@ export default function CampaignIdeaPage() {
               it to Planet verticals, accounts, channels, copy, experiments, and KPIs before review.
             </p>
             <div className="modeLinks">
-              <Link href="/">Account Brief</Link>
-              <Link href="/campaign-idea" className="activeLink">Campaign Idea Mapper</Link>
-              <Link href="/campaign-builder">Campaign Builder</Link>
+              <Link href="/signals">1. Signals</Link>
+              <Link href="/">2. Account</Link>
+              <Link href="/campaign-idea" className="activeLink">3. Ideas</Link>
+              <Link href="/campaign-builder">4. Build</Link>
+              <Link href="/attribution-review">5. Review</Link>
             </div>
           </div>
 
