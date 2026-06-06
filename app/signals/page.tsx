@@ -4,36 +4,62 @@ import Link from "next/link";
 import { useState } from "react";
 import { leadSignals } from "@/lib/signals";
 
-const filters = [
-  "All",
-  "High confidence",
-  "Needs review",
-  "Sales-ready",
-  "Event leads",
-  "Product usage",
-  "Website intent",
-  "Webinar",
-  "Paid media"
-] as const;
-
-type SignalFilter = (typeof filters)[number];
-
 const highConfidence = leadSignals.filter((signal) => signal.confidence === "High" || signal.confidence === "Very High");
 const needsReview = leadSignals.filter((signal) => signal.status === "Needs Enrichment" || signal.status === "Manual Review");
 const salesReady = leadSignals.filter((signal) => signal.status === "Sales Ready");
 const nurtureOnly = leadSignals.filter((signal) => signal.status === "Nurture Only");
 
-function matchesFilter(signal: (typeof leadSignals)[number], filter: SignalFilter) {
-  if (filter === "All") return true;
-  if (filter === "High confidence") return signal.confidence === "High" || signal.confidence === "Very High";
-  if (filter === "Needs review") return signal.status === "Needs Enrichment" || signal.status === "Manual Review";
-  if (filter === "Sales-ready") return signal.status === "Sales Ready";
-  if (filter === "Event leads") return signal.source.includes("Event") || signal.source.includes("SplashThat") || signal.source.includes("CSV");
-  if (filter === "Product usage") return signal.source === "Product Freemium App";
-  if (filter === "Website intent") return signal.source === "Marketo Web Activity" || signal.source === "Website Demo Form";
-  if (filter === "Webinar") return signal.source === "Webinar Attendance" || signal.source === "Salesforce Campaign Member";
-  if (filter === "Paid media") return signal.source === "LinkedIn Paid" || signal.source === "Google Ads" || signal.source === "Organic Social";
-  return true;
+const sourceOptions = Array.from(new Set(leadSignals.map((signal) => signal.source))).sort();
+const confidenceOptions = Array.from(new Set(leadSignals.map((signal) => signal.confidence)));
+const statusOptions = Array.from(new Set(leadSignals.map((signal) => signal.status))).sort();
+const verticalOptions = Array.from(new Set(leadSignals.map((signal) => signal.likelyVertical))).sort();
+
+type SignalFilters = {
+  source: string;
+  confidence: string;
+  status: string;
+  vertical: string;
+};
+
+const defaultFilters: SignalFilters = {
+  source: "All sources",
+  confidence: "All confidence",
+  status: "All statuses",
+  vertical: "All likely fits"
+};
+
+function matchesFilters(signal: (typeof leadSignals)[number], filters: SignalFilters) {
+  return (
+    (filters.source === defaultFilters.source || signal.source === filters.source) &&
+    (filters.confidence === defaultFilters.confidence || signal.confidence === filters.confidence) &&
+    (filters.status === defaultFilters.status || signal.status === filters.status) &&
+    (filters.vertical === defaultFilters.vertical || signal.likelyVertical === filters.vertical)
+  );
+}
+
+function FilterSelect({
+  id,
+  label,
+  value,
+  options,
+  onChange
+}: {
+  id: string;
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label htmlFor={id}>
+      <span>{label}</span>
+      <select id={id} value={value} onChange={(event) => onChange(event.target.value)}>
+        {options.map((option) => (
+          <option key={option}>{option}</option>
+        ))}
+      </select>
+    </label>
+  );
 }
 
 function SignalCard({ signal }: { signal: (typeof leadSignals)[number] }) {
@@ -66,8 +92,15 @@ function SignalCard({ signal }: { signal: (typeof leadSignals)[number] }) {
 }
 
 export default function SignalInboxPage() {
-  const [activeFilter, setActiveFilter] = useState<SignalFilter>("All");
-  const filteredSignals = leadSignals.filter((signal) => matchesFilter(signal, activeFilter));
+  const [activeFilters, setActiveFilters] = useState<SignalFilters>(defaultFilters);
+  const filteredSignals = leadSignals.filter((signal) => matchesFilters(signal, activeFilters));
+  const hasActiveFilters = Object.entries(defaultFilters).some(
+    ([key, value]) => activeFilters[key as keyof SignalFilters] !== value
+  );
+
+  function updateFilter(key: keyof SignalFilters, value: string) {
+    setActiveFilters((current) => ({ ...current, [key]: value }));
+  }
 
   return (
     <main>
@@ -97,22 +130,45 @@ export default function SignalInboxPage() {
         <div><span>{nurtureOnly.length}</span><strong>nurture-only</strong></div>
       </section>
 
-      <section className="filterBar" aria-label="Signal filters">
-        {filters.map((filter) => (
-          <button
-            type="button"
-            key={filter}
-            className={activeFilter === filter ? "selected" : ""}
-            onClick={() => setActiveFilter(filter)}
-            aria-pressed={activeFilter === filter}
-          >
-            {filter}
-          </button>
-        ))}
+      <section className="filterBar structuredFilters" aria-label="Signal filters">
+        <FilterSelect
+          id="sourceFilter"
+          label="Source system"
+          value={activeFilters.source}
+          options={[defaultFilters.source, ...sourceOptions]}
+          onChange={(value) => updateFilter("source", value)}
+        />
+        <FilterSelect
+          id="confidenceFilter"
+          label="Confidence"
+          value={activeFilters.confidence}
+          options={[defaultFilters.confidence, ...confidenceOptions]}
+          onChange={(value) => updateFilter("confidence", value)}
+        />
+        <FilterSelect
+          id="statusFilter"
+          label="Status"
+          value={activeFilters.status}
+          options={[defaultFilters.status, ...statusOptions]}
+          onChange={(value) => updateFilter("status", value)}
+        />
+        <FilterSelect
+          id="verticalFilter"
+          label="Likely fit"
+          value={activeFilters.vertical}
+          options={[defaultFilters.vertical, ...verticalOptions]}
+          onChange={(value) => updateFilter("vertical", value)}
+        />
+        <button type="button" className="resetFilters" onClick={() => setActiveFilters(defaultFilters)} disabled={!hasActiveFilters}>
+          Reset filters
+        </button>
       </section>
 
       <section className="filterResultCount">
-        <p>{filteredSignals.length} signal{filteredSignals.length === 1 ? "" : "s"} shown for {activeFilter}.</p>
+        <p>
+          {filteredSignals.length} signal{filteredSignals.length === 1 ? "" : "s"} shown
+          {hasActiveFilters ? " for the selected filters." : "."}
+        </p>
       </section>
 
       <section className="signalGrid">
