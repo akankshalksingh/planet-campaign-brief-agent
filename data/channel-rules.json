@@ -1,0 +1,42 @@
+[
+  {
+    "channel": "Email",
+    "bestFor": "Nurture, invite, and re-engagement motions",
+    "opsNote": "Build as Marketo-ready email variants with approved CTA and UTM tracking."
+  },
+  {
+    "channel": "LinkedIn Paid",
+    "bestFor": "Persona-aware awareness and retargeting",
+    "opsNote": "Keep copy concise and avoid unsupported quantified claims."
+  },
+  {
+    "channel": "SDR Follow-up",
+    "bestFor": "ABM follow-up and sales handoff",
+    "opsNote": "Use account progression language; do not imply a live Salesforce task was created."
+  },
+  {
+    "channel": "Landing Page",
+    "bestFor": "Conversion destination and message proof",
+    "opsNote": "Confirm destination and form tracking before launch."
+  },
+  {
+    "channel": "Webinar",
+    "bestFor": "Education, executive awareness, and proof-led storytelling",
+    "opsNote": "Map registrants to campaign member statuses before launch."
+  },
+  {
+    "channel": "Event Follow-up",
+    "bestFor": "Post-event nurture and meeting conversion",
+    "opsNote": "Use event source fields consistently with CRM campaign mapping."
+  },
+  {
+    "channel": "Organic Social",
+    "bestFor": "Low-friction message testing",
+    "opsNote": "Use as a learning layer, not the primary attribution source."
+  },
+  {
+    "channel": "Paid Search",
+    "bestFor": "Intent capture around known search demand",
+    "opsNote": "Requires utm_term and keyword governance before launch."
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "campaignPrefix": "fy26_q3",
+  "requiredFields": ["utm_source", "utm_medium", "utm_campaign", "utm_content"],
+  "optionalFields": ["utm_term"],
+  "channels": {
+    "Email": { "source": "marketo", "medium": "email", "contentPrefix": "email" },
+    "LinkedIn Paid": { "source": "linkedin", "medium": "paid_social", "contentPrefix": "ad" },
+    "SDR Follow-up": { "source": "salesforce", "medium": "sdr_outreach", "contentPrefix": "sdr" },
+    "Landing Page": { "source": "direct", "medium": "landing_page", "contentPrefix": "lp" },
+    "Webinar": { "source": "marketo", "medium": "webinar", "contentPrefix": "webinar" },
+    "Event Follow-up": { "source": "event", "medium": "follow_up", "contentPrefix": "event" },
+    "Organic Social": { "source": "linkedin", "medium": "organic_social", "contentPrefix": "social" },
+    "Paid Search": { "source": "google", "medium": "cpc", "contentPrefix": "search" }
+  }
+}

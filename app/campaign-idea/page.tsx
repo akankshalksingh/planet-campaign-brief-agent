@@ -281,6 +281,7 @@ export default function CampaignIdeaPage() {
             <div className="modeLinks">
               <Link href="/">Account Brief</Link>
               <Link href="/campaign-idea" className="activeLink">Campaign Idea Mapper</Link>
+              <Link href="/campaign-builder">Campaign Builder</Link>
             </div>
           </div>
 

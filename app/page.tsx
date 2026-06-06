@@ -55,6 +55,7 @@ export default function Home() {
             <div className="modeLinks">
               <Link href="/" className="activeLink">Account Brief</Link>
               <Link href="/campaign-idea">Campaign Idea Mapper</Link>
+              <Link href="/campaign-builder">Campaign Builder</Link>
             </div>
           </div>
           <form className="briefForm" onSubmit={handleSubmit}>

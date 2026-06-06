@@ -650,6 +650,154 @@ main {
   grid-column: 1 / -1;
 }
 
+.campaignBuilderHero {
+  min-height: 96vh;
+}
+
+.campaignBuilderHeroContent {
+  grid-template-columns: minmax(0, 0.8fr) minmax(420px, 620px);
+  min-height: 96vh;
+  align-items: center;
+}
+
+.campaignBuilderForm {
+  display: grid;
+  gap: 0.72rem;
+  max-height: calc(100vh - 4rem);
+  overflow: auto;
+}
+
+.campaignBuilderForm label {
+  margin: 0.25rem 0 0;
+}
+
+.formHeader,
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.formHeader strong {
+  display: block;
+  margin-top: -0.4rem;
+  font-size: 1.2rem;
+}
+
+.formTwoCol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.channelSelect button {
+  flex: 1 1 9rem;
+}
+
+.builderWide {
+  grid-column: 1 / -1;
+}
+
+.tabRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.75rem 0;
+}
+
+.tabRow button,
+.copyButton {
+  border: 1px solid rgba(125, 227, 230, 0.22);
+  background: rgba(125, 227, 230, 0.07);
+  color: var(--planet-cyan-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 0.48rem 0.62rem;
+}
+
+.tabRow .selected,
+.copyButton:hover {
+  background: var(--planet-cyan);
+  color: #001314;
+}
+
+.builderChannels {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.utmTable,
+.checklistGrid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.utmTable div,
+.checklistGrid div,
+.reviewItem {
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(5, 7, 7, 0.38);
+  padding: 0.85rem;
+}
+
+.utmTable .warning,
+.checklistGrid .needs_review {
+  border-color: rgba(244, 201, 93, 0.42);
+}
+
+.utmTable .error,
+.checklistGrid .missing {
+  border-color: rgba(255, 107, 95, 0.42);
+}
+
+.utmTable strong,
+.reviewItem strong,
+.checklistGrid strong {
+  display: block;
+}
+
+.utmTable span,
+.checklistGrid span,
+.reviewItem span {
+  display: block;
+  margin-top: 0.32rem;
+  color: var(--planet-cyan-soft);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.utmTable code {
+  display: block;
+  margin: 0.55rem 0;
+  overflow-wrap: anywhere;
+  color: var(--planet-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.checklistGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.checklistGrid p,
+.reviewItem p {
+  margin: 0.45rem 0 0;
+}
+
+.checklistGrid em {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--planet-subtle);
+  font-size: 0.78rem;
+  font-style: normal;
+}
+
+.reviewItem + .reviewItem {
+  margin-top: 0.75rem;
+}
+
 .evidenceList {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -739,7 +887,10 @@ main {
   }
 
   .workflowBand,
-  .evidenceList {
+  .evidenceList,
+  .builderChannels,
+  .checklistGrid,
+  .formTwoCol {
     grid-template-columns: 1fr;
   }
 

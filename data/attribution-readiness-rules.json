@@ -1,0 +1,11 @@
+[
+  { "id": "campaign_name", "label": "Campaign name exists", "weight": 10 },
+  { "id": "primary_kpi", "label": "Primary KPI exists", "weight": 10 },
+  { "id": "landing_page_url", "label": "Landing page URL exists", "weight": 10 },
+  { "id": "utm_links", "label": "UTM links generated", "weight": 15 },
+  { "id": "utm_valid", "label": "All UTM links valid", "weight": 15 },
+  { "id": "channel_plan", "label": "Channel plan generated", "weight": 10 },
+  { "id": "member_statuses", "label": "Campaign member statuses suggested", "weight": 10 },
+  { "id": "launch_checklist", "label": "Launch checklist generated", "weight": 10 },
+  { "id": "review_flags", "label": "Human review flags included", "weight": 10 }
+]
