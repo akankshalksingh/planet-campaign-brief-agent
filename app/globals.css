@@ -231,6 +231,7 @@ main {
 }
 
 .briefForm textarea,
+.briefForm input,
 .briefForm > input,
 .briefForm select {
   width: 100%;
@@ -253,6 +254,7 @@ main {
 }
 
 .briefForm textarea:focus,
+.briefForm input:focus,
 .briefForm > input:focus,
 .briefForm select:focus {
   border-color: var(--planet-cyan-soft);
@@ -355,7 +357,8 @@ main {
 .filterBar,
 .signalGrid,
 .signalDetailHero,
-.signalActionBand {
+.signalActionBand,
+.workflowFormBand {
   width: min(1180px, calc(100% - 2rem));
   margin: 2rem auto;
 }
@@ -669,8 +672,6 @@ main {
 .campaignBuilderForm {
   display: grid;
   gap: 0.72rem;
-  max-height: calc(100vh - 4rem);
-  overflow: auto;
 }
 
 .campaignBuilderForm label {
@@ -827,6 +828,20 @@ main {
 
 .workflowNav {
   margin-top: 1.5rem;
+}
+
+.workflowFormBand {
+  margin-top: 0.5rem;
+}
+
+.workflowForm {
+  width: 100%;
+}
+
+.workflowForm .primarySubmit {
+  justify-self: start;
+  width: auto;
+  min-width: 14rem;
 }
 
 .signalSummary {

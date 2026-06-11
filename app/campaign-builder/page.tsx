@@ -359,107 +359,107 @@ export default function CampaignBuilderPage() {
 
   return (
     <main>
-      <section className="hero campaignBuilderHero">
-        <div className="heroContent campaignBuilderHeroContent">
-          <div className="heroCopy">
-            <p className="eyebrow">Campaign Builder V2</p>
-            <h1>Build launch-ready campaign packages.</h1>
-            <p>
-              Turn a campaign idea into channel assets, UTM links, KPI planning, attribution readiness,
-              launch checklist items, and human review flags before anything goes live.
-            </p>
-            <div className="modeLinks">
-              <Link href="/signals">1. Signals</Link>
-              <Link href="/">2. Account</Link>
-              <Link href="/campaign-idea">3. Ideas</Link>
-              <Link href="/campaign-builder" className="activeLink">4. Build</Link>
-              <Link href="/attribution-review">5. Review</Link>
+      <section className="signalHero">
+        <div>
+          <p className="eyebrow">Campaign Builder V2</p>
+          <h1>Build launch-ready campaign packages.</h1>
+          <p>
+            Turn a campaign idea into channel assets, UTM links, KPI planning, attribution readiness,
+            launch checklist items, and human review flags before anything goes live.
+          </p>
+          <div className="modeLinks workflowNav">
+            <Link href="/signals">1. Signals</Link>
+            <Link href="/">2. Account</Link>
+            <Link href="/campaign-idea">3. Ideas</Link>
+            <Link href="/campaign-builder" className="activeLink">4. Build</Link>
+            <Link href="/attribution-review">5. Review</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="workflowFormBand">
+        <form className="briefForm campaignBuilderForm workflowForm" onSubmit={handleSubmit}>
+          <div className="formHeader">
+            <div>
+              <p className="eyebrow">Launch input</p>
+              <strong>Execution brief</strong>
+            </div>
+            <button type="button" className="copyButton" onClick={() => setForm(demoInput)}>Load demo</button>
+          </div>
+
+          <label htmlFor="campaignIdea">Campaign idea</label>
+          <textarea id="campaignIdea" value={form.campaignIdea} onChange={(event) => updateField("campaignIdea", event.target.value)} />
+
+          <div className="formTwoCol">
+            <div>
+              <label htmlFor="targetVertical">Target vertical</label>
+              <select id="targetVertical" value={form.targetVertical} onChange={(event) => updateField("targetVertical", event.target.value)}>
+                <option>Insurance & Risk</option>
+                {VERTICALS.map((vertical) => <option key={vertical}>{vertical}</option>)}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="campaignGoal">Campaign goal</label>
+              <input id="campaignGoal" value={form.campaignGoal} onChange={(event) => updateField("campaignGoal", event.target.value)} />
             </div>
           </div>
 
-          <form className="briefForm campaignBuilderForm" onSubmit={handleSubmit}>
-            <div className="formHeader">
-              <div>
-                <p className="eyebrow">Launch input</p>
-                <strong>Execution brief</strong>
-              </div>
-              <button type="button" className="copyButton" onClick={() => setForm(demoInput)}>Load demo</button>
+          <label htmlFor="targetAudience">Target audience</label>
+          <textarea id="targetAudience" value={form.targetAudience} onChange={(event) => updateField("targetAudience", event.target.value)} />
+
+          <div className="formTwoCol">
+            <div>
+              <label htmlFor="primaryCTA">Primary CTA</label>
+              <input id="primaryCTA" value={form.primaryCTA} onChange={(event) => updateField("primaryCTA", event.target.value)} />
             </div>
-
-            <label htmlFor="campaignIdea">Campaign idea</label>
-            <textarea id="campaignIdea" value={form.campaignIdea} onChange={(event) => updateField("campaignIdea", event.target.value)} />
-
-            <div className="formTwoCol">
-              <div>
-                <label htmlFor="targetVertical">Target vertical</label>
-                <select id="targetVertical" value={form.targetVertical} onChange={(event) => updateField("targetVertical", event.target.value)}>
-                  <option>Insurance & Risk</option>
-                  {VERTICALS.map((vertical) => <option key={vertical}>{vertical}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="campaignGoal">Campaign goal</label>
-                <input id="campaignGoal" value={form.campaignGoal} onChange={(event) => updateField("campaignGoal", event.target.value)} />
-              </div>
+            <div>
+              <label htmlFor="landingPageUrl">Landing page URL</label>
+              <input id="landingPageUrl" value={form.landingPageUrl} onChange={(event) => updateField("landingPageUrl", event.target.value)} />
             </div>
+          </div>
 
-            <label htmlFor="targetAudience">Target audience</label>
-            <textarea id="targetAudience" value={form.targetAudience} onChange={(event) => updateField("targetAudience", event.target.value)} />
-
-            <div className="formTwoCol">
-              <div>
-                <label htmlFor="primaryCTA">Primary CTA</label>
-                <input id="primaryCTA" value={form.primaryCTA} onChange={(event) => updateField("primaryCTA", event.target.value)} />
-              </div>
-              <div>
-                <label htmlFor="landingPageUrl">Landing page URL</label>
-                <input id="landingPageUrl" value={form.landingPageUrl} onChange={(event) => updateField("landingPageUrl", event.target.value)} />
-              </div>
+          <div className="formTwoCol">
+            <div>
+              <label htmlFor="lifecycleStage">Lifecycle stage</label>
+              <select id="lifecycleStage" value={form.lifecycleStage} onChange={(event) => updateField("lifecycleStage", event.target.value)}>
+                {LIFECYCLE_STAGES.map((stage) => <option key={stage}>{stage}</option>)}
+              </select>
             </div>
-
-            <div className="formTwoCol">
-              <div>
-                <label htmlFor="lifecycleStage">Lifecycle stage</label>
-                <select id="lifecycleStage" value={form.lifecycleStage} onChange={(event) => updateField("lifecycleStage", event.target.value)}>
-                  {LIFECYCLE_STAGES.map((stage) => <option key={stage}>{stage}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="salesMotion">Sales motion</label>
-                <select id="salesMotion" value={form.salesMotion} onChange={(event) => updateField("salesMotion", event.target.value)}>
-                  {SALES_MOTIONS.map((motion) => <option key={motion}>{motion}</option>)}
-                </select>
-              </div>
+            <div>
+              <label htmlFor="salesMotion">Sales motion</label>
+              <select id="salesMotion" value={form.salesMotion} onChange={(event) => updateField("salesMotion", event.target.value)}>
+                {SALES_MOTIONS.map((motion) => <option key={motion}>{motion}</option>)}
+              </select>
             </div>
+          </div>
 
-            <div className="formTwoCol">
-              <div>
-                <label htmlFor="region">Region</label>
-                <input id="region" value={form.region} onChange={(event) => updateField("region", event.target.value)} />
-              </div>
-              <div>
-                <label htmlFor="campaignOwner">Campaign owner</label>
-                <input id="campaignOwner" value={form.campaignOwner} onChange={(event) => updateField("campaignOwner", event.target.value)} />
-              </div>
+          <div className="formTwoCol">
+            <div>
+              <label htmlFor="region">Region</label>
+              <input id="region" value={form.region} onChange={(event) => updateField("region", event.target.value)} />
             </div>
-
-            <label>Channels</label>
-            <div className="segmentedControl channelSelect">
-              {CAMPAIGN_BUILDER_CHANNELS.map((channel) => (
-                <button type="button" key={channel} className={form.channels.includes(channel) ? "selected" : ""} onClick={() => toggleChannel(channel)}>
-                  {channel}
-                </button>
-              ))}
+            <div>
+              <label htmlFor="campaignOwner">Campaign owner</label>
+              <input id="campaignOwner" value={form.campaignOwner} onChange={(event) => updateField("campaignOwner", event.target.value)} />
             </div>
+          </div>
 
-            <label htmlFor="notes">Notes</label>
-            <textarea id="notes" value={form.notes} onChange={(event) => updateField("notes", event.target.value)} />
+          <label>Channels</label>
+          <div className="segmentedControl channelSelect">
+            {CAMPAIGN_BUILDER_CHANNELS.map((channel) => (
+              <button type="button" key={channel} className={form.channels.includes(channel) ? "selected" : ""} onClick={() => toggleChannel(channel)}>
+                {channel}
+              </button>
+            ))}
+          </div>
 
-            <button className="primarySubmit" type="submit" disabled={loading || form.channels.length === 0}>
-              {loading ? "Building" : "Build campaign package"}
-            </button>
-          </form>
-        </div>
+          <label htmlFor="notes">Notes</label>
+          <textarea id="notes" value={form.notes} onChange={(event) => updateField("notes", event.target.value)} />
+
+          <button className="primarySubmit" type="submit" disabled={loading || form.channels.length === 0}>
+            {loading ? "Building" : "Build campaign package"}
+          </button>
+        </form>
       </section>
 
       {error ? (

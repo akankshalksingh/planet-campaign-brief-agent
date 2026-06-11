@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { BriefView } from "@/app/components/BriefView";
-import { OrbitField } from "@/app/components/OrbitField";
 import { CampaignBrief } from "@/lib/types";
 
 const examples = ["Syngenta", "AXA", "Port of Rotterdam", "NASA", "Lockheed Martin", "Uber", "Apple"];
@@ -42,47 +41,47 @@ export default function Home() {
 
   return (
     <main>
-      <section className="hero">
-        <OrbitField />
-        <div className="heroContent">
-          <div className="heroCopy">
-            <p className="eyebrow">Planet GTM intelligence</p>
-            <h1>Account intelligence for Planet campaign teams.</h1>
-            <p>
-              Research a target account, classify its best-fit Planet vertical, retrieve approved
-              messaging, and generate a review-ready campaign strategy with copy starters and KPIs.
-            </p>
-            <div className="modeLinks">
-              <Link href="/signals">1. Signals</Link>
-              <Link href="/" className="activeLink">2. Account</Link>
-              <Link href="/campaign-idea">3. Ideas</Link>
-              <Link href="/campaign-builder">4. Build</Link>
-              <Link href="/attribution-review">5. Review</Link>
-            </div>
+      <section className="signalHero">
+        <div>
+          <p className="eyebrow">Planet GTM intelligence</p>
+          <h1>Account intelligence for Planet campaign teams.</h1>
+          <p>
+            Research a target account, classify its best-fit Planet vertical, retrieve approved
+            messaging, and generate a review-ready campaign strategy with copy starters and KPIs.
+          </p>
+          <div className="modeLinks workflowNav">
+            <Link href="/signals">1. Signals</Link>
+            <Link href="/" className="activeLink">2. Account</Link>
+            <Link href="/campaign-idea">3. Ideas</Link>
+            <Link href="/campaign-builder">4. Build</Link>
+            <Link href="/attribution-review">5. Review</Link>
           </div>
-          <form className="briefForm" onSubmit={handleSubmit}>
-            <label htmlFor="companyName">Target account</label>
-            <div className="inputRow">
-              <input
-                id="companyName"
-                value={companyName}
-                onChange={(event) => setCompanyName(event.target.value)}
-                placeholder="Enter a company name"
-                autoComplete="organization"
-              />
-              <button type="submit" disabled={loading || companyName.trim().length < 2}>
-                {loading ? "Generating" : "Generate brief"}
-              </button>
-            </div>
-            <div className="exampleBar" aria-label="Example companies">
-              {examples.map((example) => (
-                <button type="button" key={example} onClick={() => setCompanyName(example)}>
-                  {example}
-                </button>
-              ))}
-            </div>
-          </form>
         </div>
+      </section>
+
+      <section className="workflowFormBand">
+        <form className="briefForm workflowForm" onSubmit={handleSubmit}>
+          <label htmlFor="companyName">Target account</label>
+          <div className="inputRow">
+            <input
+              id="companyName"
+              value={companyName}
+              onChange={(event) => setCompanyName(event.target.value)}
+              placeholder="Enter a company name"
+              autoComplete="organization"
+            />
+            <button type="submit" disabled={loading || companyName.trim().length < 2}>
+              {loading ? "Generating" : "Generate brief"}
+            </button>
+          </div>
+          <div className="exampleBar" aria-label="Example companies">
+            {examples.map((example) => (
+              <button type="button" key={example} onClick={() => setCompanyName(example)}>
+                {example}
+              </button>
+            ))}
+          </div>
+        </form>
       </section>
 
       {error ? (

@@ -269,86 +269,86 @@ export default function CampaignIdeaPage() {
 
   return (
     <main>
-      <section className="hero campaignIdeaHero">
-        <div className="heroContent campaignIdeaHeroContent">
-          <div className="heroCopy">
-            <p className="eyebrow">Signal-to-campaign planner</p>
-            <h1>Turn campaign ideas into GTM motions.</h1>
-            <p>
-              Start with a theme, product launch, event follow-up, or account motion. The agent maps
-              it to Planet verticals, accounts, channels, copy, experiments, and KPIs before review.
-            </p>
-            <div className="modeLinks">
-              <Link href="/signals">1. Signals</Link>
-              <Link href="/">2. Account</Link>
-              <Link href="/campaign-idea" className="activeLink">3. Ideas</Link>
-              <Link href="/campaign-builder">4. Build</Link>
-              <Link href="/attribution-review">5. Review</Link>
-            </div>
+      <section className="signalHero">
+        <div>
+          <p className="eyebrow">Signal-to-campaign planner</p>
+          <h1>Turn campaign ideas into GTM motions.</h1>
+          <p>
+            Start with a theme, product launch, event follow-up, or account motion. The agent maps
+            it to Planet verticals, accounts, channels, copy, experiments, and KPIs before review.
+          </p>
+          <div className="modeLinks workflowNav">
+            <Link href="/signals">1. Signals</Link>
+            <Link href="/">2. Account</Link>
+            <Link href="/campaign-idea" className="activeLink">3. Ideas</Link>
+            <Link href="/campaign-builder">4. Build</Link>
+            <Link href="/attribution-review">5. Review</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="workflowFormBand">
+        <form className="briefForm campaignIdeaForm workflowForm" onSubmit={handleSubmit}>
+          <label htmlFor="campaignIdea">Campaign idea</label>
+          <textarea
+            id="campaignIdea"
+            value={campaignIdea}
+            onChange={(event) => setCampaignIdea(event.target.value)}
+            placeholder="Paste campaign idea, theme, or brief"
+          />
+
+          <label htmlFor="optionalTargetAccount">Optional target account</label>
+          <input
+            id="optionalTargetAccount"
+            value={optionalTargetAccount}
+            onChange={(event) => setOptionalTargetAccount(event.target.value)}
+            placeholder="Company or agency name"
+          />
+
+          <label>Relationship type</label>
+          <div className="segmentedControl">
+            {RELATIONSHIP_TYPES.map((item) => (
+              <button
+                type="button"
+                className={relationshipType === item ? "selected" : ""}
+                key={item}
+                onClick={() => setRelationshipType(item)}
+              >
+                {item}
+              </button>
+            ))}
           </div>
 
-          <form className="briefForm campaignIdeaForm" onSubmit={handleSubmit}>
-            <label htmlFor="campaignIdea">Campaign idea</label>
-            <textarea
-              id="campaignIdea"
-              value={campaignIdea}
-              onChange={(event) => setCampaignIdea(event.target.value)}
-              placeholder="Paste campaign idea, theme, or brief"
-            />
+          <label htmlFor="campaignGoal">Campaign goal</label>
+          <select
+            id="campaignGoal"
+            value={campaignGoal}
+            onChange={(event) => setCampaignGoal(event.target.value as CampaignGoal)}
+          >
+            {CAMPAIGN_GOALS.map((goal) => (
+              <option key={goal}>{goal}</option>
+            ))}
+          </select>
 
-            <label htmlFor="optionalTargetAccount">Optional target account</label>
-            <input
-              id="optionalTargetAccount"
-              value={optionalTargetAccount}
-              onChange={(event) => setOptionalTargetAccount(event.target.value)}
-              placeholder="Company or agency name"
-            />
+          <button type="button" className="uploadPlaceholder">
+            Upload campaign brief
+          </button>
+          <p className="helperText">
+            Upload support planned for campaign briefs, event notes, sales notes, and product launch themes.
+          </p>
 
-            <label>Relationship type</label>
-            <div className="segmentedControl">
-              {RELATIONSHIP_TYPES.map((item) => (
-                <button
-                  type="button"
-                  className={relationshipType === item ? "selected" : ""}
-                  key={item}
-                  onClick={() => setRelationshipType(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
+          <div className="exampleBar" aria-label="Example campaign ideas">
+            {quickIdeas.map((idea) => (
+              <button type="button" key={idea} onClick={() => setCampaignIdea(idea)}>
+                {idea}
+              </button>
+            ))}
+          </div>
 
-            <label htmlFor="campaignGoal">Campaign goal</label>
-            <select
-              id="campaignGoal"
-              value={campaignGoal}
-              onChange={(event) => setCampaignGoal(event.target.value as CampaignGoal)}
-            >
-              {CAMPAIGN_GOALS.map((goal) => (
-                <option key={goal}>{goal}</option>
-              ))}
-            </select>
-
-            <button type="button" className="uploadPlaceholder">
-              Upload campaign brief
-            </button>
-            <p className="helperText">
-              Upload support planned for campaign briefs, event notes, sales notes, and product launch themes.
-            </p>
-
-            <div className="exampleBar" aria-label="Example campaign ideas">
-              {quickIdeas.map((idea) => (
-                <button type="button" key={idea} onClick={() => setCampaignIdea(idea)}>
-                  {idea}
-                </button>
-              ))}
-            </div>
-
-            <button className="primarySubmit" type="submit" disabled={loading || campaignIdea.trim().length < 3}>
-              {loading ? "Generating" : "Generate GTM strategy"}
-            </button>
-          </form>
-        </div>
+          <button className="primarySubmit" type="submit" disabled={loading || campaignIdea.trim().length < 3}>
+            {loading ? "Generating" : "Generate GTM strategy"}
+          </button>
+        </form>
       </section>
 
       {error ? (
