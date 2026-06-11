@@ -45,7 +45,7 @@ export default function Home() {
       <section className="signalHero">
         <OrbitField />
         <div className="signalHeroContent">
-          <p className="eyebrow">Planet GTM intelligence</p>
+          <p className="eyebrow">GTM Signal</p>
           <h1>Target account intelligence</h1>
           <p>
             Research an account, understand its strongest Planet use case, and generate a focused

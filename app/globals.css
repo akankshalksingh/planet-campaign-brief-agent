@@ -659,6 +659,182 @@ main {
   grid-column: 1 / -1;
 }
 
+.accountDecision {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 2rem auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.decisionHero,
+.decisionPanel {
+  border: 1px solid var(--planet-card-border);
+  background: rgba(14, 21, 22, 0.88);
+  padding: 1.15rem;
+}
+
+.decisionHero {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.decisionHero h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3.4vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.decisionHero p,
+.decisionPanel p {
+  color: var(--planet-muted);
+  line-height: 1.6;
+}
+
+.decisionMetricGrid,
+.inlineFacts {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.decisionMetricGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.decisionMetricGrid div,
+.inlineFacts div {
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(5, 7, 7, 0.42);
+  padding: 0.72rem;
+}
+
+.decisionMetricGrid dt,
+.inlineFacts dt {
+  color: var(--planet-subtle);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.decisionMetricGrid dd,
+.inlineFacts dd {
+  margin: 0.28rem 0 0;
+  color: var(--planet-text);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.decisionMetricGrid .warn dd {
+  color: var(--planet-warning);
+}
+
+.decisionPanel h3 {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1.22;
+}
+
+.inlineFacts {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 1rem;
+}
+
+.fitColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.fitColumns div {
+  border-top: 1px solid rgba(125, 227, 230, 0.12);
+  padding-top: 0.85rem;
+}
+
+.campaignDirection,
+.qualityPanel {
+  grid-column: 1 / -1;
+}
+
+.primaryAction {
+  display: inline-flex;
+  margin-top: 1rem;
+  border: 1px solid rgba(125, 227, 230, 0.45);
+  background: var(--planet-cyan);
+  color: #001314;
+  font-weight: 900;
+  padding: 0.72rem 0.95rem;
+  text-decoration: none;
+}
+
+.primaryAction:hover {
+  background: var(--planet-cyan-soft);
+}
+
+.compactBullets {
+  margin: 0.8rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--planet-muted);
+  line-height: 1.55;
+}
+
+.compactDetails {
+  margin-top: 0.9rem;
+  border-top: 1px solid rgba(125, 227, 230, 0.14);
+  padding-top: 0.8rem;
+}
+
+.compactDetails summary {
+  cursor: pointer;
+  color: var(--planet-cyan-soft);
+  font-weight: 900;
+}
+
+.compactScoreGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.compactScoreRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid rgba(125, 227, 230, 0.12);
+  background: rgba(5, 7, 7, 0.34);
+  padding: 0.65rem;
+}
+
+.compactScoreRow span {
+  color: var(--planet-muted);
+}
+
+.compactEvidenceList {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.compactEvidenceList a {
+  display: grid;
+  gap: 0.25rem;
+  border: 1px solid rgba(125, 227, 230, 0.12);
+  background: rgba(5, 7, 7, 0.34);
+  color: inherit;
+  padding: 0.72rem;
+  text-decoration: none;
+}
+
+.compactEvidenceList span {
+  color: var(--planet-muted);
+  line-height: 1.45;
+}
+
 .campaignBuilderHero {
   min-height: 96vh;
 }
@@ -1282,6 +1458,9 @@ main {
   .heroContent,
   .resultHero,
   .resultGrid,
+  .accountDecision,
+  .decisionHero,
+  .fitColumns,
   .signalGrid,
   .signalDetailHeroContent,
   .signalCardHeader,
@@ -1311,6 +1490,9 @@ main {
 
   .inputRow,
   .metrics,
+  .decisionMetricGrid,
+  .inlineFacts,
+  .compactScoreGrid,
   .variantGrid {
     grid-template-columns: 1fr;
   }
