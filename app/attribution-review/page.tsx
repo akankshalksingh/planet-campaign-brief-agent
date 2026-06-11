@@ -29,11 +29,11 @@ export default async function AttributionReviewPage({
         <OrbitField />
         <div className="signalDetailHeroContent">
           <div>
-            <p className="eyebrow">Attribution Review</p>
-            <h1>Measurement before launch.</h1>
+            <p className="eyebrow">Launch Review</p>
+            <h1>Campaign readiness review</h1>
             <p>
-              This review uses mock demo data and deterministic checks. It does not create Salesforce campaigns,
-              Marketo programs, or live campaign member records.
+              Check campaign tracking, attribution fields, UTMs, missing information, and review
+              requirements before launch.
             </p>
             <div className="modeLinks workflowNav">
               <Link href="/signals">1. Signals</Link>

@@ -108,11 +108,11 @@ export default function SignalInboxPage() {
       <section className="signalHero">
         <OrbitField />
         <div className="signalHeroContent">
-          <p className="eyebrow">GTM Signal Inbox</p>
+          <p className="eyebrow">Signal Inbox</p>
           <h1>Today&apos;s account signals</h1>
           <p>
-            Demo-only signals structured like Marketo, Salesforce, event, product, paid-media, and enrichment data.
-            The workflow starts with observed behavior before campaign ideas or copy are generated.
+            See which accounts are showing interest based on product activity, events, campaigns,
+            CRM data, and other engagement signals.
           </p>
           <div className="modeLinks workflowNav">
             <Link href="/signals" className="activeLink">1. Signals</Link>

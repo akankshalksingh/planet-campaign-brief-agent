@@ -363,11 +363,11 @@ export default function CampaignBuilderPage() {
       <section className="signalHero">
         <OrbitField />
         <div className="signalHeroContent">
-          <p className="eyebrow">Campaign Builder V2</p>
-          <h1>Build launch-ready campaign packages.</h1>
+          <p className="eyebrow">Campaign Execution</p>
+          <h1>Campaign builder</h1>
           <p>
-            Turn a campaign idea into channel assets, UTM links, KPI planning, attribution readiness,
-            launch checklist items, and human review flags before anything goes live.
+            Create the campaign assets, UTM links, channel plan, test plan, KPIs, and launch
+            checklist.
           </p>
           <div className="modeLinks workflowNav">
             <Link href="/signals">1. Signals</Link>

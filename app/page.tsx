@@ -45,11 +45,11 @@ export default function Home() {
       <section className="signalHero">
         <OrbitField />
         <div className="signalHeroContent">
-          <p className="eyebrow">Planet GTM intelligence</p>
-          <h1>Account intelligence for Planet campaign teams.</h1>
+          <p className="eyebrow">GTM Signal</p>
+          <h1>Target account intelligence</h1>
           <p>
-            Research a target account, classify its best-fit Planet vertical, retrieve approved
-            messaging, and generate a review-ready campaign strategy with copy starters and KPIs.
+            Research an account, understand its strongest Planet use case, and generate a focused
+            campaign brief.
           </p>
           <div className="modeLinks workflowNav">
             <Link href="/signals">1. Signals</Link>

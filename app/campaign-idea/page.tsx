@@ -273,11 +273,11 @@ export default function CampaignIdeaPage() {
       <section className="signalHero">
         <OrbitField />
         <div className="signalHeroContent">
-          <p className="eyebrow">Signal-to-campaign planner</p>
-          <h1>Turn campaign ideas into GTM motions.</h1>
+          <p className="eyebrow">Campaign Planning</p>
+          <h1>Campaign idea planner</h1>
           <p>
-            Start with a theme, product launch, event follow-up, or account motion. The agent maps
-            it to Planet verticals, accounts, channels, copy, experiments, and KPIs before review.
+            Turn a campaign idea into the right audience, target accounts, channels, messaging, and
+            campaign goal.
           </p>
           <div className="modeLinks workflowNav">
             <Link href="/signals">1. Signals</Link>
