@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { CampaignIdeaSeed, LeadSignal } from "@/lib/signals";
+import { CampaignBuilderInput } from "@/lib/campaign-builder/schemas";
+import { buildCampaignInputFromSignal, CampaignIdeaSeed, LeadSignal, toBuilderChannels } from "@/lib/signals";
 
 type EditableIdea = CampaignIdeaSeed;
 
@@ -54,16 +55,49 @@ function buildRegeneratedIdeas(signal: LeadSignal, round: number): EditableIdea[
 }
 
 function buildCampaignBuilderHref(signal: LeadSignal, campaignIdea: EditableIdea) {
+  const builderInput = buildCampaignInputFromSignal(signal, campaignIdea.id);
+  const targetAudience = `${signal.personTitle} and adjacent stakeholders at ${signal.accountName}; ${campaignIdea.useCase}`;
+  const notes = `Signal source: ${signal.source}. ${signal.sourceDetail}. Review note: ${campaignIdea.reviewNote}. This is mock demo data, not a live Salesforce or Marketo record.`;
   const params = new URLSearchParams({
     signal: signal.id,
     idea: campaignIdea.id,
     campaignIdea: campaignIdea.name,
+    targetVertical: builderInput.targetVertical,
+    targetAudience,
+    campaignGoal: builderInput.campaignGoal,
     primaryCTA: campaignIdea.cta,
-    channels: campaignIdea.bestChannels.join(","),
-    notes: campaignIdea.reviewNote
+    landingPageUrl: builderInput.landingPageUrl,
+    channels: toBuilderChannels(campaignIdea.bestChannels).join(","),
+    notes
   });
 
   return `/campaign-builder?${params.toString()}`;
+}
+
+function buildStoredSelection(signal: LeadSignal, campaignIdea: EditableIdea): CampaignBuilderInput {
+  const builderInput = buildCampaignInputFromSignal(signal, campaignIdea.id);
+  return {
+    ...builderInput,
+    campaignIdea: campaignIdea.name,
+    targetAudience: `${signal.personTitle} and adjacent stakeholders at ${signal.accountName}; ${campaignIdea.useCase}`,
+    primaryCTA: campaignIdea.cta,
+    channels: toBuilderChannels(campaignIdea.bestChannels),
+    notes: `Signal source: ${signal.source}. ${signal.sourceDetail}. Review note: ${campaignIdea.reviewNote}. This is mock demo data, not a live Salesforce or Marketo record.`
+  };
+}
+
+function persistSelectedIdea(signal: LeadSignal, campaignIdea: EditableIdea) {
+  window.sessionStorage.setItem(
+    "planet:selectedCampaignBuilderInput",
+    JSON.stringify({
+      input: buildStoredSelection(signal, campaignIdea),
+      source: {
+        title: campaignIdea.name,
+        meta: `${signal.accountName} · ${signal.likelyVertical} · ${signal.status}`,
+        sourceLabel: "Pre-filled from selected idea"
+      }
+    })
+  );
 }
 
 export function SignalIdeaWorkspace({ signal }: { signal: LeadSignal }) {
@@ -176,7 +210,7 @@ export function SignalIdeaWorkspace({ signal }: { signal: LeadSignal }) {
               </>
             )}
 
-            <Link className="primaryLink" href={buildCampaignBuilderHref(signal, campaignIdea)}>
+            <Link className="primaryLink" href={buildCampaignBuilderHref(signal, campaignIdea)} onClick={() => persistSelectedIdea(signal, campaignIdea)}>
               Build this campaign
             </Link>
           </article>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { OrbitField } from "@/app/components/OrbitField";
-import { CAMPAIGN_BUILDER_CHANNELS, CampaignBuilderChannel } from "@/lib/campaign-builder/schemas";
+import { CAMPAIGN_BUILDER_CHANNELS, CampaignBuilderChannel, CampaignBuilderInput } from "@/lib/campaign-builder/schemas";
 import {
   CAMPAIGN_GOALS,
   CampaignGoal,
@@ -55,6 +55,57 @@ function buildCampaignBuilderHref(result: CampaignIdeaResult) {
   });
 
   return `/campaign-builder?${params.toString()}`;
+}
+
+function defaultLandingPageUrl(vertical: string) {
+  if (vertical.includes("Agriculture")) return "https://www.planet.com/solutions/agriculture";
+  if (vertical.includes("Maritime")) return "https://www.planet.com/solutions/maritime";
+  if (vertical.includes("Defense")) return "https://www.planet.com/solutions/defense-and-intelligence";
+  if (vertical.includes("Government")) return "https://www.planet.com/solutions/government";
+  if (vertical.includes("Climate") || vertical.includes("Insurance")) return "https://www.planet.com/solutions/climate-risk";
+  return "https://www.planet.com/solutions";
+}
+
+function buildCampaignBuilderInput(result: CampaignIdeaResult): CampaignBuilderInput {
+  const strategy = result.campaign_idea_strategy;
+  const vertical = strategy.fit_assessment.recommended_verticals[0]?.vertical ?? "Other / Adjacent / Manual Review";
+  const channels = strategy.channel_strategy.recommended_channels
+    .map((channel) => normalizeBuilderChannel(channel.channel))
+    .filter((channel): channel is CampaignBuilderChannel => Boolean(channel));
+
+  return {
+    campaignIdea: strategy.gtm_strategy.campaign_theme || strategy.gtm_strategy.campaign_name || strategy.campaign_idea,
+    targetVertical: vertical,
+    targetAudience: strategy.targeting.primary_personas.join(", ") || strategy.optional_target_account || "Target audience",
+    campaignGoal: strategy.campaign_goal,
+    primaryCTA: strategy.gtm_strategy.cta,
+    landingPageUrl: defaultLandingPageUrl(vertical),
+    region: "North America",
+    channels: channels.length ? channels : ["Email", "LinkedIn Paid", "SDR Follow-up", "Landing Page"],
+    lifecycleStage: strategy.relationship_type === "New prospect" ? "Awareness" : "Consideration",
+    salesMotion: strategy.relationship_type === "New prospect" ? "inbound" : "ABM",
+    campaignOwner: "Growth Marketing",
+    notes: [
+      strategy.gtm_strategy.primary_message,
+      strategy.gtm_strategy.buyer_pain,
+      strategy.gtm_strategy.planet_value
+    ].filter(Boolean).join(" ")
+  };
+}
+
+function persistSelectedIdea(result: CampaignIdeaResult) {
+  const input = buildCampaignBuilderInput(result);
+  window.sessionStorage.setItem(
+    "planet:selectedCampaignBuilderInput",
+    JSON.stringify({
+      input,
+      source: {
+        title: input.campaignIdea,
+        meta: `${input.targetVertical} · ${input.salesMotion} · ${input.lifecycleStage}`,
+        sourceLabel: "Pre-filled from selected idea"
+      }
+    })
+  );
 }
 
 function TagList({ items }: { items: string[] }) {
@@ -177,7 +228,7 @@ function CampaignIdeaResults({ result }: { result: CampaignIdeaResult }) {
             <dd>{strategy.gtm_strategy.cta}</dd>
           </div>
         </dl>
-        <Link className="primaryLink" href={builderHref}>
+        <Link className="primaryLink" href={builderHref} onClick={() => persistSelectedIdea(result)}>
           Build this campaign
         </Link>
       </article>
@@ -325,7 +376,7 @@ export default function CampaignIdeaPage() {
             <Link href="/signals">1. Signals</Link>
             <Link href="/">2. Account</Link>
             <Link href="/campaign-idea" className="activeLink">3. Ideas</Link>
-            <Link href={builderHref}>4. Build</Link>
+            <Link href={builderHref} onClick={() => result ? persistSelectedIdea(result) : undefined}>4. Build</Link>
             <Link href="/reporting">5. Reporting</Link>
           </div>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { OrbitField } from "@/app/components/OrbitField";
 import {
   AssetHandoff,
@@ -22,6 +22,10 @@ type SourceContext = {
   meta: string;
   sourceLabel: string;
 } | null;
+type StoredBuilderSelection = {
+  input?: CampaignBuilderInput;
+  source?: Exclude<SourceContext, null>;
+};
 type AssetKey = "email" | "linkedin" | "sdr" | "landing_page";
 type RegenKey = AssetKey | "summary";
 type HandoffMessage = Partial<Record<AssetKey | "draft", string>>;
@@ -67,6 +71,17 @@ const emptyInput: BuilderForm = {
   notes: ""
 };
 
+const selectedBuilderInputKey = "planet:selectedCampaignBuilderInput";
+
+function defaultLandingPageUrl(vertical: string) {
+  if (vertical.includes("Agriculture")) return "https://www.planet.com/solutions/agriculture";
+  if (vertical.includes("Maritime")) return "https://www.planet.com/solutions/maritime";
+  if (vertical.includes("Defense")) return "https://www.planet.com/solutions/defense-and-intelligence";
+  if (vertical.includes("Government")) return "https://www.planet.com/solutions/government";
+  if (vertical.includes("Climate") || vertical.includes("Insurance")) return "https://www.planet.com/solutions/climate-risk";
+  return "https://www.planet.com/solutions";
+}
+
 function regionCode(region: string) {
   const normalized = region.trim().toLowerCase();
   if (!normalized) return "GLOBAL";
@@ -96,10 +111,24 @@ function buildCampaignName(region: string, campaignIdea: string, year = currentY
 }
 
 function toBuilderForm(input: CampaignBuilderInput): BuilderForm {
+  const landingPageUrl = input.landingPageUrl?.trim() || defaultLandingPageUrl(input.targetVertical);
   return {
     ...input,
+    landingPageUrl,
     campaignName: input.campaignName?.trim() || buildCampaignName(input.region || "North America", input.campaignIdea)
   };
+}
+
+function readStoredBuilderSelection(): StoredBuilderSelection | null {
+  try {
+    const stored = window.sessionStorage.getItem(selectedBuilderInputKey);
+    if (!stored) return null;
+    const parsed = JSON.parse(stored) as StoredBuilderSelection;
+    if (!parsed.input?.campaignIdea) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 function parseInitialState(): { form: BuilderForm; source: SourceContext } {
@@ -108,6 +137,7 @@ function parseInitialState(): { form: BuilderForm; source: SourceContext } {
   const params = new URLSearchParams(window.location.search);
   const signal = getSignalById(params.get("signal") ?? "");
   const idea = signal ? getSignalIdea(signal, params.get("idea") ?? undefined) : null;
+  const storedSelection = readStoredBuilderSelection();
   const hasPrefill =
     signal ||
     params.has("campaignIdea") ||
@@ -115,7 +145,7 @@ function parseInitialState(): { form: BuilderForm; source: SourceContext } {
     params.has("targetAudience") ||
     params.has("campaignGoal") ||
     params.has("primaryCTA");
-  const initialForm = signal ? buildCampaignInputFromSignal(signal, idea?.id) : emptyInput;
+  const initialForm = signal ? buildCampaignInputFromSignal(signal, idea?.id) : storedSelection?.input ?? emptyInput;
   const editedChannels = params.get("channels")
     ?.split(",")
     .map((channel) => channel.trim())
@@ -123,7 +153,7 @@ function parseInitialState(): { form: BuilderForm; source: SourceContext } {
       CAMPAIGN_BUILDER_CHANNELS.includes(channel as CampaignBuilderChannel)
     );
 
-  const form = hasPrefill ? toBuilderForm({
+  const mergedInput = {
     ...initialForm,
     campaignIdea: params.get("campaignIdea") || initialForm.campaignIdea,
     targetVertical: params.get("targetVertical") || initialForm.targetVertical,
@@ -131,8 +161,11 @@ function parseInitialState(): { form: BuilderForm; source: SourceContext } {
     campaignGoal: params.get("campaignGoal") || initialForm.campaignGoal,
     primaryCTA: params.get("primaryCTA") || initialForm.primaryCTA,
     channels: editedChannels?.length ? editedChannels : initialForm.channels,
-    landingPageUrl: params.get("landingPageUrl") || initialForm.landingPageUrl,
     notes: params.get("notes") || initialForm.notes
+  };
+  const form = hasPrefill || storedSelection?.input ? toBuilderForm({
+    ...mergedInput,
+    landingPageUrl: params.get("landingPageUrl") || initialForm.landingPageUrl || defaultLandingPageUrl(mergedInput.targetVertical)
   }) : emptyInput;
 
   const source = signal
@@ -147,7 +180,9 @@ function parseInitialState(): { form: BuilderForm; source: SourceContext } {
           meta: `${form.targetVertical} · ${form.salesMotion} · ${form.lifecycleStage}`,
           sourceLabel: params.has("targetAudience") ? "Pre-filled from Account" : "Pre-filled from Ideas"
         }
-      : null;
+      : storedSelection?.source
+        ? storedSelection.source
+        : null;
 
   return { form, source };
 }
@@ -1019,6 +1054,21 @@ export default function CampaignBuilderPage() {
   const generationSummary = `This will generate campaign assets, owner handoffs, draft destinations, and a clear next action for each selected channel.`;
   const prefilledLabel = sourceContext?.sourceLabel;
 
+  useEffect(() => {
+    if (!form.campaignIdea.trim()) return;
+    window.sessionStorage.setItem(
+      selectedBuilderInputKey,
+      JSON.stringify({
+        input: form,
+        source: sourceContext ?? {
+          title: form.campaignIdea,
+          meta: `${form.targetVertical || "Campaign"} · ${form.salesMotion} · ${form.lifecycleStage}`,
+          sourceLabel: "Saved campaign setup"
+        }
+      })
+    );
+  }, [form, sourceContext]);
+
   function updateField(key: keyof BuilderForm, value: string) {
     setForm((current) => {
       const next = { ...current, [key]: value };
@@ -1152,7 +1202,7 @@ export default function CampaignBuilderPage() {
             <div>
               <p className="eyebrow">Launch input</p>
               <strong>Campaign setup</strong>
-              <p>Confirm the campaign direction and choose the assets, channels, and launch requirements to generate.</p>
+              <p>Confirm the selected idea, audience, channels, and messaging context before creating assets.</p>
             </div>
             <button type="button" className="copyButton" onClick={loadDemo}>Load demo</button>
           </div>
@@ -1172,9 +1222,9 @@ export default function CampaignBuilderPage() {
 
           <section className="builderSetupSection">
             <div className="setupSectionIntro">
-              <p className="eyebrow">01 — Campaign direction</p>
-              <h2>Define the core motion</h2>
-              <p>Define what the campaign is about, who it is for, and what action it should drive.</p>
+              <p className="eyebrow">Selected idea</p>
+              <h2>Campaign idea summary</h2>
+              <p>Review the idea and campaign direction carried forward from the previous step.</p>
             </div>
 
             <div>
@@ -1193,10 +1243,18 @@ export default function CampaignBuilderPage() {
                 <FieldError message={fieldErrors.targetVertical} />
               </div>
               <div>
-                <FieldLabel required>Campaign goal</FieldLabel>
-                <input id="campaignGoal" value={form.campaignGoal} onChange={(event) => updateField("campaignGoal", event.target.value)} />
-                <FieldError message={fieldErrors.campaignGoal} />
+                <FieldLabel required>Primary CTA</FieldLabel>
+                <input id="primaryCTA" value={form.primaryCTA} onChange={(event) => updateField("primaryCTA", event.target.value)} />
+                <FieldError message={fieldErrors.primaryCTA} />
               </div>
+            </div>
+          </section>
+
+          <section className="builderSetupSection">
+            <div className="setupSectionIntro">
+              <p className="eyebrow">Audience and goal</p>
+              <h2>Who this is for</h2>
+              <p>Keep the audience and conversion goal tight so the generated assets stay focused.</p>
             </div>
 
             <div>
@@ -1206,23 +1264,17 @@ export default function CampaignBuilderPage() {
             </div>
 
             <div>
-              <FieldLabel required>Primary CTA</FieldLabel>
-              <input id="primaryCTA" value={form.primaryCTA} onChange={(event) => updateField("primaryCTA", event.target.value)} />
-              <FieldError message={fieldErrors.primaryCTA} />
+              <FieldLabel required>Campaign goal</FieldLabel>
+              <input id="campaignGoal" value={form.campaignGoal} onChange={(event) => updateField("campaignGoal", event.target.value)} />
+              <FieldError message={fieldErrors.campaignGoal} />
             </div>
           </section>
 
           <section className="builderSetupSection">
             <div className="setupSectionIntro">
-              <p className="eyebrow">02 — Activation details</p>
-              <h2>Choose channels and launch structure</h2>
-              <p>Choose where the campaign will run and how it should be structured.</p>
-            </div>
-
-            <div>
-              <FieldLabel required>Landing-page URL</FieldLabel>
-              <input id="landingPageUrl" value={form.landingPageUrl} onChange={(event) => updateField("landingPageUrl", event.target.value)} />
-              <FieldError message={fieldErrors.landingPageUrl} />
+              <p className="eyebrow">Channels</p>
+              <h2>Choose assets to build</h2>
+              <p>Select the channels that should receive generated campaign assets.</p>
             </div>
 
             <div>
@@ -1237,10 +1289,35 @@ export default function CampaignBuilderPage() {
               <p className="builderSummaryLine">{channelSummary}</p>
               <FieldError message={fieldErrors.channels} />
             </div>
+          </section>
+
+          <section className="builderSetupSection">
+            <div className="setupSectionIntro">
+              <p className="eyebrow">Optional notes</p>
+              <h2>Messaging context</h2>
+              <p>Add proof points, claims to avoid, audience context, or brand guidance.</p>
+            </div>
+            <div>
+              <FieldLabel optional>Messaging context</FieldLabel>
+              <textarea id="notes" className="guidanceTextarea" value={form.notes} onChange={(event) => updateField("notes", event.target.value)} placeholder="Add required proof points, claims to avoid, audience context, or brand guidance." />
+            </div>
 
             <details className="advancedSettings">
-              <summary>Advanced campaign settings</summary>
+              <summary>Advanced settings</summary>
               <div className="formTwoCol">
+                <div>
+                  <FieldLabel required>Landing-page URL</FieldLabel>
+                  <input id="landingPageUrl" value={form.landingPageUrl} onChange={(event) => updateField("landingPageUrl", event.target.value)} />
+                  <FieldError message={fieldErrors.landingPageUrl} />
+                </div>
+                <div>
+                  <FieldLabel optional>Campaign name</FieldLabel>
+                  <input value={form.campaignName} onChange={(event) => {
+                    setCampaignNameEdited(true);
+                    updateField("campaignName", event.target.value);
+                  }} />
+                  <p className="builderSummaryLine">Generated from region, campaign idea, and year.</p>
+                </div>
                 <div>
                   <FieldLabel optional>Lifecycle stage</FieldLabel>
                   <select id="lifecycleStage" value={form.lifecycleStage} onChange={(event) => updateField("lifecycleStage", event.target.value)}>
@@ -1262,32 +1339,9 @@ export default function CampaignBuilderPage() {
                   <input id="campaignOwner" value={form.campaignOwner} onChange={(event) => updateField("campaignOwner", event.target.value)} />
                 </div>
               </div>
+              <button type="button" className="copyButton advancedRecalculate" onClick={recalculateName}>Recalculate campaign name</button>
             </details>
           </section>
-
-          <section className="builderSetupSection">
-            <div className="setupSectionIntro">
-              <p className="eyebrow">03 — Messaging guidance</p>
-              <h2>Add guardrails</h2>
-              <p>Add required proof points, claims to avoid, audience context, or brand instructions.</p>
-            </div>
-            <div>
-              <FieldLabel optional>Messaging guidance</FieldLabel>
-              <textarea id="notes" className="guidanceTextarea" value={form.notes} onChange={(event) => updateField("notes", event.target.value)} placeholder="Add required proof points, claims to avoid, audience context, or brand guidance." />
-            </div>
-          </section>
-
-          <div className="campaignNamePreview">
-            <div>
-              <span>Campaign name</span>
-              <input value={form.campaignName} onChange={(event) => {
-                setCampaignNameEdited(true);
-                updateField("campaignName", event.target.value);
-              }} />
-              <p>Generated from region, campaign idea, and year. Uses underscores for Salesforce, Marketo, and UTMs.</p>
-            </div>
-            <button type="button" className="copyButton" onClick={recalculateName}>Recalculate name</button>
-          </div>
 
           <div className="generationSummary">
             <p>{generationSummary}</p>
@@ -1295,7 +1349,7 @@ export default function CampaignBuilderPage() {
 
           <div className="builderPrimaryActions">
             <button className="primarySubmit" type="submit" disabled={loading}>
-              {loading ? "Generating campaign package..." : result ? "Update and regenerate" : "Generate campaign package"}
+              {loading ? "Building campaign assets..." : result ? "Update and regenerate" : "Build campaign assets"}
             </button>
             {result ? <Link className="secondaryAction" href="/reporting">Continue to Reporting</Link> : null}
           </div>
