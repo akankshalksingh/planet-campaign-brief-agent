@@ -852,11 +852,12 @@ main {
 
 .signalHero h1,
 .signalDetailHero h1 {
-  max-width: 780px;
+  max-width: min(1180px, calc(100vw - 4rem));
   margin: 0;
-  font-size: clamp(3rem, 5.4vw, 5.6rem);
+  font-size: clamp(3rem, 5vw, 5.35rem);
   line-height: 1;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .signalHeroContent,
@@ -1285,6 +1286,7 @@ main {
   .signalHero h1,
   .signalDetailHero h1 {
     font-size: 3rem;
+    white-space: normal;
   }
 }
 
