@@ -43,12 +43,6 @@ export default async function AttributionReviewPage({
               <Link href={`/attribution-review?signal=${signal.id}&idea=${selectedIdea.id}`} className="activeLink">5. Review</Link>
             </div>
           </div>
-          <div className="metrics">
-            <div><span>Readiness</span><strong>{packageOutput.attributionReadiness.score}/100</strong></div>
-            <div><span>Status</span><strong>{packageOutput.attributionReadiness.status.replace("_", " ")}</strong></div>
-            <div><span>UTMs</span><strong>{packageOutput.utmLinks.length}</strong></div>
-            <div className="warn"><span>Human review</span><strong>Required</strong></div>
-          </div>
         </div>
       </section>
 
