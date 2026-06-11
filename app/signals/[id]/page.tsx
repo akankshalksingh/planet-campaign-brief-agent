@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OrbitField } from "@/app/components/OrbitField";
+import { RiskFeedback } from "@/app/components/RiskFeedback";
 import { getSignalById } from "@/lib/signals";
 
 export default async function SignalDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -87,6 +88,7 @@ export default async function SignalDetailPage({ params }: { params: Promise<{ i
               <span>{flag.severity}</span>
               <strong>{flag.title}</strong>
               <p>{flag.detail}</p>
+              <RiskFeedback riskTitle={flag.title} />
             </div>
           ))}
         </article>
