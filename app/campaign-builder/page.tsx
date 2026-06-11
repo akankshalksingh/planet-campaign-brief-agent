@@ -310,7 +310,21 @@ export default function CampaignBuilderPage() {
     if (typeof window === "undefined") return demoInput;
     const params = new URLSearchParams(window.location.search);
     const signal = getSignalById(params.get("signal") ?? "");
-    return signal ? buildCampaignInputFromSignal(signal, params.get("idea") ?? undefined) : demoInput;
+    const initialForm = signal ? buildCampaignInputFromSignal(signal, params.get("idea") ?? undefined) : demoInput;
+    const editedChannels = params.get("channels")
+      ?.split(",")
+      .map((channel) => channel.trim())
+      .filter((channel): channel is CampaignBuilderChannel =>
+        CAMPAIGN_BUILDER_CHANNELS.includes(channel as CampaignBuilderChannel)
+      );
+
+    return {
+      ...initialForm,
+      campaignIdea: params.get("campaignIdea") || initialForm.campaignIdea,
+      primaryCTA: params.get("primaryCTA") || initialForm.primaryCTA,
+      channels: editedChannels?.length ? editedChannels : initialForm.channels,
+      notes: params.get("notes") || initialForm.notes
+    };
   });
   const [result, setResult] = useState<CampaignBuilderOutput | null>(null);
   const [loading, setLoading] = useState(false);
