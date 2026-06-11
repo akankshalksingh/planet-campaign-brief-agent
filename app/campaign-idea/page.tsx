@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { OrbitField } from "@/app/components/OrbitField";
+import { CAMPAIGN_BUILDER_CHANNELS, CampaignBuilderChannel } from "@/lib/campaign-builder/schemas";
 import {
   CAMPAIGN_GOALS,
   CampaignGoal,
@@ -19,6 +20,42 @@ const quickIdeas = [
   "Climate Risk Evidence Layer",
   "From Managing Files to Finding Answers"
 ];
+
+function normalizeBuilderChannel(value: string): CampaignBuilderChannel | null {
+  const normalized = value.toLowerCase();
+  if (normalized.includes("email")) return "Email";
+  if (normalized.includes("linkedin") || normalized.includes("paid social")) return "LinkedIn Paid";
+  if (normalized.includes("sdr") || normalized.includes("sales")) return "SDR Follow-up";
+  if (normalized.includes("landing")) return "Landing Page";
+  if (normalized.includes("webinar")) return "Webinar";
+  if (normalized.includes("event")) return "Event Follow-up";
+  if (normalized.includes("organic")) return "Organic Social";
+  if (normalized.includes("search")) return "Paid Search";
+  return CAMPAIGN_BUILDER_CHANNELS.includes(value as CampaignBuilderChannel) ? value as CampaignBuilderChannel : null;
+}
+
+function buildCampaignBuilderHref(result: CampaignIdeaResult) {
+  const strategy = result.campaign_idea_strategy;
+  const vertical = strategy.fit_assessment.recommended_verticals[0]?.vertical ?? "Other / Adjacent / Manual Review";
+  const channels = strategy.channel_strategy.recommended_channels
+    .map((channel) => normalizeBuilderChannel(channel.channel))
+    .filter((channel): channel is CampaignBuilderChannel => Boolean(channel));
+  const params = new URLSearchParams({
+    campaignIdea: strategy.gtm_strategy.campaign_theme || strategy.gtm_strategy.campaign_name || strategy.campaign_idea,
+    targetVertical: vertical,
+    targetAudience: strategy.targeting.primary_personas.join(", ") || strategy.optional_target_account || "Target audience",
+    campaignGoal: strategy.campaign_goal,
+    primaryCTA: strategy.gtm_strategy.cta,
+    channels: (channels.length ? channels : ["Email", "LinkedIn Paid", "SDR Follow-up", "Landing Page"]).join(","),
+    notes: [
+      strategy.gtm_strategy.primary_message,
+      strategy.gtm_strategy.buyer_pain,
+      strategy.gtm_strategy.planet_value
+    ].filter(Boolean).join(" ")
+  });
+
+  return `/campaign-builder?${params.toString()}`;
+}
 
 function TagList({ items }: { items: string[] }) {
   if (!items.length) return <p className="mutedText">No recommendations returned.</p>;
@@ -59,6 +96,7 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
 function CampaignIdeaResults({ result }: { result: CampaignIdeaResult }) {
   const strategy = result.campaign_idea_strategy;
   const evaluation = result.campaign_idea_eval;
+  const builderHref = buildCampaignBuilderHref(result);
 
   return (
     <section className="resultGrid campaignIdeaResults">
@@ -139,6 +177,9 @@ function CampaignIdeaResults({ result }: { result: CampaignIdeaResult }) {
             <dd>{strategy.gtm_strategy.cta}</dd>
           </div>
         </dl>
+        <Link className="primaryLink" href={builderHref}>
+          Build this campaign
+        </Link>
       </article>
 
       <article className="panel">
@@ -241,6 +282,7 @@ export default function CampaignIdeaPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<CampaignIdeaResult | null>(null);
+  const builderHref = result ? buildCampaignBuilderHref(result) : "/campaign-builder";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -283,7 +325,7 @@ export default function CampaignIdeaPage() {
             <Link href="/signals">1. Signals</Link>
             <Link href="/">2. Account</Link>
             <Link href="/campaign-idea" className="activeLink">3. Ideas</Link>
-            <Link href="/campaign-builder">4. Build</Link>
+            <Link href={builderHref}>4. Build</Link>
             <Link href="/reporting">5. Reporting</Link>
           </div>
         </div>

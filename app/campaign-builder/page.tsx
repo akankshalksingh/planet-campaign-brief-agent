@@ -51,6 +51,22 @@ const demoInput: BuilderForm = {
     "Keep the message grounded in risk visibility, wildfire exposure, and earlier decision-making. Avoid unsupported claims."
 };
 
+const emptyInput: BuilderForm = {
+  campaignIdea: "",
+  campaignName: "",
+  targetVertical: "",
+  targetAudience: "",
+  campaignGoal: "",
+  primaryCTA: "",
+  landingPageUrl: "",
+  region: "North America",
+  channels: ["Email", "LinkedIn Paid", "SDR Follow-up", "Landing Page"],
+  lifecycleStage: "Consideration",
+  salesMotion: "ABM",
+  campaignOwner: "Growth Marketing",
+  notes: ""
+};
+
 function regionCode(region: string) {
   const normalized = region.trim().toLowerCase();
   if (!normalized) return "GLOBAL";
@@ -87,12 +103,19 @@ function toBuilderForm(input: CampaignBuilderInput): BuilderForm {
 }
 
 function parseInitialState(): { form: BuilderForm; source: SourceContext } {
-  if (typeof window === "undefined") return { form: demoInput, source: null };
+  if (typeof window === "undefined") return { form: emptyInput, source: null };
 
   const params = new URLSearchParams(window.location.search);
   const signal = getSignalById(params.get("signal") ?? "");
   const idea = signal ? getSignalIdea(signal, params.get("idea") ?? undefined) : null;
-  const initialForm = signal ? buildCampaignInputFromSignal(signal, idea?.id) : demoInput;
+  const hasPrefill =
+    signal ||
+    params.has("campaignIdea") ||
+    params.has("targetVertical") ||
+    params.has("targetAudience") ||
+    params.has("campaignGoal") ||
+    params.has("primaryCTA");
+  const initialForm = signal ? buildCampaignInputFromSignal(signal, idea?.id) : emptyInput;
   const editedChannels = params.get("channels")
     ?.split(",")
     .map((channel) => channel.trim())
@@ -100,7 +123,7 @@ function parseInitialState(): { form: BuilderForm; source: SourceContext } {
       CAMPAIGN_BUILDER_CHANNELS.includes(channel as CampaignBuilderChannel)
     );
 
-  const form = toBuilderForm({
+  const form = hasPrefill ? toBuilderForm({
     ...initialForm,
     campaignIdea: params.get("campaignIdea") || initialForm.campaignIdea,
     targetVertical: params.get("targetVertical") || initialForm.targetVertical,
@@ -108,8 +131,9 @@ function parseInitialState(): { form: BuilderForm; source: SourceContext } {
     campaignGoal: params.get("campaignGoal") || initialForm.campaignGoal,
     primaryCTA: params.get("primaryCTA") || initialForm.primaryCTA,
     channels: editedChannels?.length ? editedChannels : initialForm.channels,
+    landingPageUrl: params.get("landingPageUrl") || initialForm.landingPageUrl,
     notes: params.get("notes") || initialForm.notes
-  });
+  }) : emptyInput;
 
   const source = signal
     ? {

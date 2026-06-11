@@ -1,14 +1,9 @@
 import Link from "next/link";
 import { OrbitField } from "@/app/components/OrbitField";
-import { demoCampaignPerformance } from "@/lib/reporting";
+import { CampaignPerformance, demoCampaignPerformances } from "@/lib/reporting";
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat("en-US").format(value);
-}
-
-function formatDateRange(start: string, end: string) {
-  const formatter = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" });
-  return `${formatter.format(new Date(`${start}T00:00:00`))} - ${formatter.format(new Date(`${end}T00:00:00`))}`;
 }
 
 function conversion(from: number, to: number) {
@@ -16,49 +11,65 @@ function conversion(from: number, to: number) {
   return `${((to / from) * 100).toFixed(1)}%`;
 }
 
+function sumMetric(campaigns: CampaignPerformance[], metric: keyof CampaignPerformance["funnel"]) {
+  return campaigns.reduce((total, campaign) => total + campaign.funnel[metric], 0);
+}
+
+function channelTotal(campaigns: CampaignPerformance[], channelName: string, metric: string) {
+  return campaigns.reduce((total, campaign) => {
+    const channel = campaign.channels.find((item) => item.channel === channelName);
+    return total + (channel?.metrics[metric] ?? 0);
+  }, 0);
+}
+
 export default function ReportingPage() {
-  const performance = demoCampaignPerformance;
-  const email = performance.channels.find((item) => item.channel === "Email");
-  const linkedin = performance.channels.find((item) => item.channel === "LinkedIn Paid");
-  const sdr = performance.channels.find((item) => item.channel === "SDR Follow-up");
-  const landing = performance.channels.find((item) => item.channel === "Landing Page");
+  const campaigns = demoCampaignPerformances;
+  const activeCampaigns = campaigns.filter((campaign) => campaign.status === "active").length;
+  const reached = sumMetric(campaigns, "reached");
+  const engaged = sumMetric(campaigns, "engaged");
+  const demoRequests = sumMetric(campaigns, "demoRequests");
+  const mqls = sumMetric(campaigns, "mqls");
+  const sqls = sumMetric(campaigns, "sqls");
+  const opportunities = sumMetric(campaigns, "opportunities");
+  const meetingsBooked = campaigns.reduce((total, campaign) => total + campaign.outcomes.meetingsBooked, 0);
+  const channelsActivated = Array.from(new Set(campaigns.flatMap((campaign) => campaign.channels.map((channel) => channel.channel))));
   const channelRows = [
     {
       channel: "Email",
-      activated: `${formatNumber(email?.metrics.sent ?? 0)} sent`,
-      engagement: `${formatNumber(email?.metrics.clicked ?? 0)} clicks`,
-      conversion: `${email?.metrics.ctr ?? 0}% CTR`,
-      outcome: `${email?.metrics.demoRequests ?? 0} demo requests`
+      activated: `${formatNumber(channelTotal(campaigns, "Email", "sent"))} sent`,
+      engagement: `${formatNumber(channelTotal(campaigns, "Email", "clicked"))} clicks`,
+      conversion: `${conversion(channelTotal(campaigns, "Email", "sent"), channelTotal(campaigns, "Email", "clicked"))} CTR`,
+      outcome: `${channelTotal(campaigns, "Email", "demoRequests")} demo requests`
     },
     {
       channel: "LinkedIn Paid",
-      activated: `${formatNumber(linkedin?.metrics.impressions ?? 0)} impressions`,
-      engagement: `${formatNumber(linkedin?.metrics.clicks ?? 0)} clicks`,
-      conversion: `${linkedin?.metrics.ctr ?? 0}% CTR`,
-      outcome: `${linkedin?.metrics.leads ?? 0} leads`
+      activated: `${formatNumber(channelTotal(campaigns, "LinkedIn Paid", "impressions"))} impressions`,
+      engagement: `${formatNumber(channelTotal(campaigns, "LinkedIn Paid", "clicks"))} clicks`,
+      conversion: `${conversion(channelTotal(campaigns, "LinkedIn Paid", "impressions"), channelTotal(campaigns, "LinkedIn Paid", "clicks"))} CTR`,
+      outcome: `${channelTotal(campaigns, "LinkedIn Paid", "leads")} leads`
     },
     {
       channel: "SDR Follow-up",
-      activated: `${formatNumber(sdr?.metrics.tasksAssigned ?? 0)} assigned`,
-      engagement: `${formatNumber(sdr?.metrics.replies ?? 0)} replies`,
-      conversion: `${sdr?.metrics.replyRate ?? 0}% reply rate`,
-      outcome: `${sdr?.metrics.meetingsBooked ?? 0} meetings`
+      activated: `${formatNumber(channelTotal(campaigns, "SDR Follow-up", "tasksAssigned"))} assigned`,
+      engagement: `${formatNumber(channelTotal(campaigns, "SDR Follow-up", "replies"))} replies`,
+      conversion: `${conversion(channelTotal(campaigns, "SDR Follow-up", "tasksAssigned"), channelTotal(campaigns, "SDR Follow-up", "replies"))} reply rate`,
+      outcome: `${channelTotal(campaigns, "SDR Follow-up", "meetingsBooked")} meetings`
     },
     {
       channel: "Landing Page",
-      activated: `${formatNumber(landing?.metrics.visits ?? 0)} visits`,
-      engagement: `${formatNumber(landing?.metrics.formsStarted ?? 0)} form starts`,
-      conversion: `${landing?.metrics.conversionRate ?? 0}% conversion`,
-      outcome: `${landing?.metrics.formsCompleted ?? 0} requests`
+      activated: `${formatNumber(channelTotal(campaigns, "Landing Page", "visits"))} visits`,
+      engagement: `${formatNumber(channelTotal(campaigns, "Landing Page", "formsStarted"))} form starts`,
+      conversion: `${conversion(channelTotal(campaigns, "Landing Page", "visits"), channelTotal(campaigns, "Landing Page", "formsCompleted"))} conversion`,
+      outcome: `${channelTotal(campaigns, "Landing Page", "formsCompleted")} requests`
     }
   ];
   const funnel = [
-    ["Reached", performance.funnel.reached],
-    ["Engaged", performance.funnel.engaged],
-    ["Demo requests", performance.funnel.demoRequests],
-    ["MQLs", performance.funnel.mqls],
-    ["SQLs", performance.funnel.sqls],
-    ["Opportunities", performance.funnel.opportunities]
+    ["Reached", reached],
+    ["Engaged", engaged],
+    ["Demo requests", demoRequests],
+    ["MQLs", mqls],
+    ["SQLs", sqls],
+    ["Opportunities", opportunities]
   ] as const;
 
   return (
@@ -83,33 +94,55 @@ export default function ReportingPage() {
         <article className="panel primaryPanel reportingOverview">
           <div>
             <p className="eyebrow">Campaign overview</p>
-            <h2>{performance.campaignName}</h2>
-            <p>{performance.vertical} · {performance.region} · {performance.lifecycleStage}</p>
+            <h2>Today’s GTM campaign report</h2>
+            <p>{campaigns.length} campaigns · {activeCampaigns} active · {channelsActivated.length} channels activated</p>
             <span className="demoBadge">Demo performance data</span>
           </div>
           <dl className="inlineFacts">
-            <div><dt>Status</dt><dd>{performance.status}</dd></div>
-            <div><dt>Date range</dt><dd>{formatDateRange(performance.dateRange.start, performance.dateRange.end)}</dd></div>
-            <div><dt>Goal</dt><dd>{performance.campaignGoal}</dd></div>
-            <div><dt>Channels</dt><dd>{performance.channels.map((item) => item.channel).join(", ")}</dd></div>
+            <div><dt>Date range</dt><dd>Today · June 11, 2026</dd></div>
+            <div><dt>Campaigns running</dt><dd>{campaigns.length}</dd></div>
+            <div><dt>Active campaigns</dt><dd>{activeCampaigns}</dd></div>
+            <div><dt>Channels</dt><dd>{channelsActivated.join(", ")}</dd></div>
           </dl>
           <div className="reportFilters">
-            <label>Date range<select defaultValue="June 1-30, 2026"><option>June 1-30, 2026</option></select></label>
-            <label>Channel<select defaultValue="All"><option>All</option><option>Email</option><option>LinkedIn Paid</option><option>SDR Follow-up</option><option>Landing Page</option></select></label>
-            <label>Audience<select defaultValue="All"><option>All</option><option>{performance.audience}</option></select></label>
-            <label>Region<select defaultValue={performance.region}><option>{performance.region}</option></select></label>
+            <label>Date range<select defaultValue="Today"><option>Today</option><option>June 1-30, 2026</option></select></label>
+            <label>Channel<select defaultValue="All"><option>All</option>{channelsActivated.map((channel) => <option key={channel}>{channel}</option>)}</select></label>
+            <label>Audience<select defaultValue="All"><option>All</option>{campaigns.map((campaign) => <option key={campaign.campaignId}>{campaign.audience}</option>)}</select></label>
+            <label>Region<select defaultValue="All"><option>All</option>{Array.from(new Set(campaigns.map((campaign) => campaign.region))).map((region) => <option key={region}>{region}</option>)}</select></label>
           </div>
         </article>
 
         <article className="panel builderWide">
           <p className="eyebrow">Key results</p>
           <div className="kpiGrid">
-            <div><span>People reached</span><strong>{formatNumber(performance.funnel.reached)}</strong></div>
-            <div><span>Qualified engagements</span><strong>{formatNumber(performance.funnel.engaged)}</strong></div>
-            <div><span>Demo requests</span><strong>{performance.funnel.demoRequests}</strong></div>
-            <div><span>SDR replies</span><strong>{sdr?.metrics.replies ?? 0}</strong></div>
-            <div><span>Meetings booked</span><strong>{performance.outcomes.meetingsBooked}</strong></div>
+            <div><span>People reached</span><strong>{formatNumber(reached)}</strong></div>
+            <div><span>Qualified engagements</span><strong>{formatNumber(engaged)}</strong></div>
+            <div><span>Demo requests</span><strong>{demoRequests}</strong></div>
+            <div><span>SDR replies</span><strong>{channelTotal(campaigns, "SDR Follow-up", "replies")}</strong></div>
+            <div><span>Meetings booked</span><strong>{meetingsBooked}</strong></div>
             <div><span>Pipeline influenced</span><strong>Demo data</strong></div>
+          </div>
+        </article>
+
+        <article className="panel builderWide">
+          <p className="eyebrow">Campaigns run today</p>
+          <div className="performanceTable campaignTable">
+            <div className="tableHeader">
+              <span>Campaign</span>
+              <span>Status</span>
+              <span>Vertical</span>
+              <span>Demo requests</span>
+              <span>Next action</span>
+            </div>
+            {campaigns.map((campaign) => (
+              <div key={campaign.campaignId}>
+                <strong>{campaign.campaignName}</strong>
+                <span>{campaign.status}</span>
+                <span>{campaign.vertical}</span>
+                <span>{campaign.funnel.demoRequests}</span>
+                <span>{campaign.insight.weakestStage}</span>
+              </div>
+            ))}
           </div>
         </article>
 
@@ -151,12 +184,15 @@ export default function ReportingPage() {
         <article className="panel primaryPanel builderWide">
           <p className="eyebrow">Recommended next action</p>
           <h3>What the team should do next</h3>
-          <p>{performance.insight.recommendation}</p>
+          <p>
+            SDR follow-up is producing the strongest meeting rate today, while paid media is creating reach but weaker demo conversion.
+            Keep the account-specific SDR motion active and test sharper LinkedIn hooks tied to the highest-intent use case in each vertical.
+          </p>
           <dl className="inlineFacts">
-            <div><dt>Winning channel</dt><dd>{performance.insight.winningChannel}</dd></div>
-            <div><dt>Winning message</dt><dd>{performance.insight.winningMessage}</dd></div>
-            <div><dt>Weakest stage</dt><dd>{performance.insight.weakestStage}</dd></div>
-            <div><dt>Owner</dt><dd>{performance.insight.owner}</dd></div>
+            <div><dt>Winning channel</dt><dd>SDR Follow-up</dd></div>
+            <div><dt>Winning message</dt><dd>Earlier evidence for operational decisions</dd></div>
+            <div><dt>Weakest stage</dt><dd>Paid-social click-to-demo conversion</dd></div>
+            <div><dt>Owner</dt><dd>Growth Marketing</dd></div>
           </dl>
           <div className="builderPrimaryActions">
             <Link className="primaryAction" href="/campaign-idea">Create follow-up campaign</Link>
