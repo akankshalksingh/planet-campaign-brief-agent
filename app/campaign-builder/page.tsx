@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { OrbitField } from "@/app/components/OrbitField";
 import {
   CAMPAIGN_BUILDER_CHANNELS,
   CampaignBuilderChannel,
@@ -360,7 +361,8 @@ export default function CampaignBuilderPage() {
   return (
     <main>
       <section className="signalHero">
-        <div>
+        <OrbitField />
+        <div className="signalHeroContent">
           <p className="eyebrow">Campaign Builder V2</p>
           <h1>Build launch-ready campaign packages.</h1>
           <p>

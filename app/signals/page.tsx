@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { OrbitField } from "@/app/components/OrbitField";
 import { leadSignals } from "@/lib/signals";
 
 const highConfidence = leadSignals.filter((signal) => signal.confidence === "High" || signal.confidence === "Very High");
@@ -105,7 +106,8 @@ export default function SignalInboxPage() {
   return (
     <main>
       <section className="signalHero">
-        <div>
+        <OrbitField />
+        <div className="signalHeroContent">
           <p className="eyebrow">GTM Signal Inbox</p>
           <h1>Today&apos;s account signals</h1>
           <p>

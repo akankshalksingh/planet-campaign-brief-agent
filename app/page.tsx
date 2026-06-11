@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { BriefView } from "@/app/components/BriefView";
+import { OrbitField } from "@/app/components/OrbitField";
 import { CampaignBrief } from "@/lib/types";
 
 const examples = ["Syngenta", "AXA", "Port of Rotterdam", "NASA", "Lockheed Martin", "Uber", "Apple"];
@@ -42,7 +43,8 @@ export default function Home() {
   return (
     <main>
       <section className="signalHero">
-        <div>
+        <OrbitField />
+        <div className="signalHeroContent">
           <p className="eyebrow">Planet GTM intelligence</p>
           <h1>Account intelligence for Planet campaign teams.</h1>
           <p>

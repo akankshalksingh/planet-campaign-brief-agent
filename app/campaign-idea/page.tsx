@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { OrbitField } from "@/app/components/OrbitField";
 import {
   CAMPAIGN_GOALS,
   CampaignGoal,
@@ -270,7 +271,8 @@ export default function CampaignIdeaPage() {
   return (
     <main>
       <section className="signalHero">
-        <div>
+        <OrbitField />
+        <div className="signalHeroContent">
           <p className="eyebrow">Signal-to-campaign planner</p>
           <h1>Turn campaign ideas into GTM motions.</h1>
           <p>

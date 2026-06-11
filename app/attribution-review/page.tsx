@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { OrbitField } from "@/app/components/OrbitField";
 import { buildMockCampaignPackage } from "@/lib/campaign-builder/mockOutput";
 import { buildCampaignInputFromSignal, getSignalById, getSignalIdea, leadSignals } from "@/lib/signals";
 
@@ -25,26 +26,29 @@ export default async function AttributionReviewPage({
   return (
     <main>
       <section className="signalDetailHero">
-        <div>
-          <p className="eyebrow">Attribution Review</p>
-          <h1>Measurement before launch.</h1>
-          <p>
-            This review uses mock demo data and deterministic checks. It does not create Salesforce campaigns,
-            Marketo programs, or live campaign member records.
-          </p>
-          <div className="modeLinks workflowNav">
-            <Link href="/signals">1. Signals</Link>
-            <Link href={`/signals/${signal.id}`}>2. Account</Link>
-            <Link href={`/signals/${signal.id}/ideas`}>3. Ideas</Link>
-            <Link href={`/campaign-builder?signal=${signal.id}&idea=${selectedIdea.id}`}>4. Build</Link>
-            <Link href={`/attribution-review?signal=${signal.id}&idea=${selectedIdea.id}`} className="activeLink">5. Review</Link>
+        <OrbitField />
+        <div className="signalDetailHeroContent">
+          <div>
+            <p className="eyebrow">Attribution Review</p>
+            <h1>Measurement before launch.</h1>
+            <p>
+              This review uses mock demo data and deterministic checks. It does not create Salesforce campaigns,
+              Marketo programs, or live campaign member records.
+            </p>
+            <div className="modeLinks workflowNav">
+              <Link href="/signals">1. Signals</Link>
+              <Link href={`/signals/${signal.id}`}>2. Account</Link>
+              <Link href={`/signals/${signal.id}/ideas`}>3. Ideas</Link>
+              <Link href={`/campaign-builder?signal=${signal.id}&idea=${selectedIdea.id}`}>4. Build</Link>
+              <Link href={`/attribution-review?signal=${signal.id}&idea=${selectedIdea.id}`} className="activeLink">5. Review</Link>
+            </div>
           </div>
-        </div>
-        <div className="metrics">
-          <div><span>Readiness</span><strong>{packageOutput.attributionReadiness.score}/100</strong></div>
-          <div><span>Status</span><strong>{packageOutput.attributionReadiness.status.replace("_", " ")}</strong></div>
-          <div><span>UTMs</span><strong>{packageOutput.utmLinks.length}</strong></div>
-          <div className="warn"><span>Human review</span><strong>Required</strong></div>
+          <div className="metrics">
+            <div><span>Readiness</span><strong>{packageOutput.attributionReadiness.score}/100</strong></div>
+            <div><span>Status</span><strong>{packageOutput.attributionReadiness.status.replace("_", " ")}</strong></div>
+            <div><span>UTMs</span><strong>{packageOutput.utmLinks.length}</strong></div>
+            <div className="warn"><span>Human review</span><strong>Required</strong></div>
+          </div>
         </div>
       </section>
 

@@ -806,16 +806,37 @@ main {
 }
 
 .signalHero {
-  padding: 4rem 0 1rem;
+  position: relative;
+  width: 100%;
+  min-height: 74vh;
+  margin: 0;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(125, 227, 230, 0.16);
 }
 
 .signalHero h1,
 .signalDetailHero h1 {
   max-width: 780px;
   margin: 0;
-  font-size: clamp(3rem, 6vw, 5.8rem);
-  line-height: 0.98;
+  font-size: clamp(3rem, 5.4vw, 5.6rem);
+  line-height: 1;
   letter-spacing: 0;
+}
+
+.signalHeroContent,
+.signalDetailHeroContent {
+  position: relative;
+  z-index: 2;
+  width: min(1280px, calc(100% - 4rem));
+  margin: 0 auto;
+  padding: 5rem 0 4rem;
+}
+
+.signalHeroContent {
+  display: flex;
+  min-height: 74vh;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .signalHero p,
@@ -966,7 +987,6 @@ main {
 }
 
 .signalCardHeader,
-.signalDetailHero,
 .signalActionBand {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1025,7 +1045,20 @@ main {
 }
 
 .signalDetailHero {
-  padding-top: 3.5rem;
+  position: relative;
+  width: 100%;
+  min-height: 58vh;
+  margin: 0;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(125, 227, 230, 0.16);
+}
+
+.signalDetailHeroContent {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+  gap: 1.5rem;
+  align-items: center;
+  min-height: 58vh;
 }
 
 .timelineList {
@@ -1139,17 +1172,20 @@ main {
   .resultHero,
   .resultGrid,
   .signalGrid,
-  .signalDetailHero,
+  .signalDetailHeroContent,
   .signalCardHeader,
   .signalActionBand {
     grid-template-columns: 1fr;
   }
 
-  .heroContent {
+  .heroContent,
+  .signalHeroContent,
+  .signalDetailHeroContent {
     align-items: center;
     gap: 2rem;
     min-height: auto;
     padding: 4rem 0 3rem;
+    width: min(1180px, calc(100% - 2rem));
   }
 
   .workflowBand,
@@ -1168,13 +1204,17 @@ main {
     grid-template-columns: 1fr;
   }
 
-  .hero h1 {
+  .hero h1,
+  .signalHero h1,
+  .signalDetailHero h1 {
     font-size: 3rem;
   }
 }
 
 @media (min-width: 1280px) {
-  .heroContent {
+  .heroContent,
+  .signalHeroContent,
+  .signalDetailHeroContent {
     width: min(1280px, calc(100% - 4rem));
   }
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { OrbitField } from "@/app/components/OrbitField";
 import { getSignalById } from "@/lib/signals";
 
 export default async function SignalDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,23 +13,26 @@ export default async function SignalDetailPage({ params }: { params: Promise<{ i
   return (
     <main>
       <section className="signalDetailHero">
-        <div>
-          <p className="eyebrow">Account Signal Detail</p>
-          <h1>{signal.accountName}</h1>
-          <p>{signal.sourceDetail}</p>
-          <div className="modeLinks workflowNav">
-            <Link href="/signals">1. Signals</Link>
-            <Link href="/" className="activeLink">2. Account</Link>
-            <Link href={`/signals/${signal.id}/ideas`}>3. Ideas</Link>
-            <Link href={`/campaign-builder?signal=${signal.id}`}>4. Build</Link>
-            <Link href={`/attribution-review?signal=${signal.id}`}>5. Review</Link>
+        <OrbitField />
+        <div className="signalDetailHeroContent">
+          <div>
+            <p className="eyebrow">Account Signal Detail</p>
+            <h1>{signal.accountName}</h1>
+            <p>{signal.sourceDetail}</p>
+            <div className="modeLinks workflowNav">
+              <Link href="/signals">1. Signals</Link>
+              <Link href="/" className="activeLink">2. Account</Link>
+              <Link href={`/signals/${signal.id}/ideas`}>3. Ideas</Link>
+              <Link href={`/campaign-builder?signal=${signal.id}`}>4. Build</Link>
+              <Link href={`/attribution-review?signal=${signal.id}`}>5. Review</Link>
+            </div>
           </div>
-        </div>
-        <div className="metrics">
-          <div><span>Intent</span><strong>{signal.intentScore}/100</strong></div>
-          <div><span>Confidence</span><strong>{signal.confidence}</strong></div>
-          <div><span>Status</span><strong>{signal.status}</strong></div>
-          <div className={signal.reviewFlags.some((flag) => flag.severity === "High") ? "warn" : ""}><span>Review flags</span><strong>{signal.reviewFlags.length}</strong></div>
+          <div className="metrics">
+            <div><span>Intent</span><strong>{signal.intentScore}/100</strong></div>
+            <div><span>Confidence</span><strong>{signal.confidence}</strong></div>
+            <div><span>Status</span><strong>{signal.status}</strong></div>
+            <div className={signal.reviewFlags.some((flag) => flag.severity === "High") ? "warn" : ""}><span>Review flags</span><strong>{signal.reviewFlags.length}</strong></div>
+          </div>
         </div>
       </section>
 
