@@ -284,7 +284,7 @@ export default function CampaignIdeaPage() {
             <Link href="/">2. Account</Link>
             <Link href="/campaign-idea" className="activeLink">3. Ideas</Link>
             <Link href="/campaign-builder">4. Build</Link>
-            <Link href="/attribution-review">5. Review</Link>
+            <Link href="/reporting">5. Reporting</Link>
           </div>
         </div>
       </section>

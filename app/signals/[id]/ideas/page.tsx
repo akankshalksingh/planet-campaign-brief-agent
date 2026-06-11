@@ -23,7 +23,7 @@ export default async function SignalIdeasPage({ params }: { params: Promise<{ id
               <Link href={`/signals/${signal.id}`}>2. Account</Link>
               <Link href={`/signals/${signal.id}/ideas`} className="activeLink">3. Ideas</Link>
               <Link href={`/campaign-builder?signal=${signal.id}`}>4. Build</Link>
-              <Link href={`/attribution-review?signal=${signal.id}`}>5. Review</Link>
+              <Link href="/reporting">5. Reporting</Link>
             </div>
           </div>
           <div className="campaignCallout">

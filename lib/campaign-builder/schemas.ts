@@ -18,6 +18,18 @@ export const SALES_MOTIONS = ["ABM", "inbound", "event follow-up", "freemium lif
 const channelEnum = z.enum(CAMPAIGN_BUILDER_CHANNELS);
 const score5 = z.number().int().min(1).max(5);
 
+export const AssetHandoffSchema = z.object({
+  assetType: z.enum(["email", "linkedin", "sdr", "landing_page"]),
+  ownerRole: z.string(),
+  ownerName: z.string().optional(),
+  destination: z.string(),
+  nextAction: z.string(),
+  status: z.enum(["draft", "awaiting_approval", "handoff_prepared", "activation_requested", "active"]),
+  dueDate: z.string().optional(),
+  notes: z.string().optional(),
+  integrationMode: z.enum(["demo", "integration_ready", "live"])
+});
+
 export const CampaignBuilderInputSchema = z.object({
   campaignIdea: z.string().trim().min(3).max(2000),
   campaignName: z.string().trim().min(3).max(180).optional(),
@@ -174,3 +186,4 @@ export type CampaignBuilderInput = z.infer<typeof CampaignBuilderInputSchema>;
 export type CampaignBuilderOutput = z.infer<typeof CampaignBuilderOutputSchema>;
 export type CampaignBuilderChannel = (typeof CAMPAIGN_BUILDER_CHANNELS)[number];
 export type ReviewFlag = z.infer<typeof ReviewFlagSchema>;
+export type AssetHandoff = z.infer<typeof AssetHandoffSchema>;

@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { OrbitField } from "@/app/components/OrbitField";
-import { calculateAttributionReadiness } from "@/lib/campaign-builder/attributionReadiness";
-import { buildLaunchChecklist } from "@/lib/campaign-builder/launchChecklist";
 import {
+  AssetHandoff,
   CAMPAIGN_BUILDER_CHANNELS,
   CampaignBuilderChannel,
   CampaignBuilderInput,
@@ -13,7 +12,6 @@ import {
   LIFECYCLE_STAGES,
   SALES_MOTIONS
 } from "@/lib/campaign-builder/schemas";
-import { generateUtmLinks } from "@/lib/campaign-builder/utm";
 import { buildCampaignInputFromSignal, getSignalById, getSignalIdea } from "@/lib/signals";
 import { VERTICALS } from "@/lib/types";
 
@@ -24,18 +22,17 @@ type SourceContext = {
   meta: string;
   sourceLabel: string;
 } | null;
-type RegenKey =
-  | "summary"
-  | "email"
-  | "ads"
-  | "sdr"
-  | "landing"
-  | "test"
-  | "utms"
-  | "attribution"
-  | "checklist";
+type AssetKey = "email" | "linkedin" | "sdr" | "landing_page";
+type RegenKey = AssetKey | "summary";
+type HandoffMessage = Partial<Record<AssetKey | "draft", string>>;
 
 const currentYear = new Date().getFullYear();
+const assetLabels: Record<AssetKey, string> = {
+  email: "Email",
+  linkedin: "LinkedIn Paid",
+  sdr: "SDR Follow-up",
+  landing_page: "Landing Page"
+};
 
 const demoInput: BuilderForm = {
   campaignIdea: "Wildfire Risk Readiness",
@@ -131,45 +128,147 @@ function parseInitialState(): { form: BuilderForm; source: SourceContext } {
   return { form, source };
 }
 
-function BulletList({ items }: { items: string[] }) {
-  if (!items.length) return null;
-  return (
-    <ul className="bulletList">
-      {items.map((item) => (
-        <li key={item}>{item}</li>
-      ))}
-    </ul>
-  );
+function cleanBody(body: string, fallback: string[]) {
+  const lines = body
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => !/^hi\b/i.test(line));
+  return lines.length ? lines : fallback;
 }
 
-function CopyButton({ value, label = "Copy" }: { value: string; label?: string }) {
-  const [copied, setCopied] = useState(false);
+function makeEmailBody(form: BuilderForm) {
+  return [
+    `${form.campaignIdea} decisions can move faster than traditional reporting cycles.`,
+    `Planet helps ${form.targetAudience} use frequent Earth observation context to identify changing conditions, prioritize where deeper analysis may be needed, and align the team around a clearer next step.`,
+    `See how this workflow can support earlier planning for ${form.targetVertical.toLowerCase()} teams.`
+  ].join("\n\n");
+}
 
-  async function copy() {
-    await navigator.clipboard.writeText(value);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1200);
+function makeLinkedInText(form: BuilderForm) {
+  return [
+    `${form.campaignIdea} cannot wait for static reports to catch up.`,
+    `Planet's frequent Earth observation data can help ${form.targetAudience} monitor changing ground conditions across large areas and identify where deeper analysis may be needed.`,
+    "The goal is not more imagery. It is earlier evidence for better decisions.",
+    `${form.primaryCTA} ->`
+  ].join("\n\n");
+}
+
+function makeSdrMessage(form: BuilderForm) {
+  return `Hi {{FirstName}},
+
+Your team may be evaluating how changing conditions affect planning across large regions.
+
+Planet helps ${form.targetAudience} use frequent Earth observation data to identify change and prioritize where deeper analysis is needed.
+
+Would a short walkthrough of this ${form.campaignIdea.toLowerCase()} workflow be useful?`;
+}
+
+function polishResult(result: CampaignBuilderOutput, form: BuilderForm): CampaignBuilderOutput {
+  const emailBody = makeEmailBody(form);
+  return {
+    ...result,
+    campaignSummary: {
+      ...result.campaignSummary,
+      campaignName: form.campaignName || result.campaignSummary.campaignName,
+      executiveSummary: `${form.campaignIdea} is ready for asset review and handoff across email, paid social, SDR follow-up, and landing-page activation.`
+    },
+    copyAssets: {
+      ...result.copyAssets,
+      email: {
+        subjectLines: [`See ${form.campaignIdea.toLowerCase()} sooner`, `${form.campaignIdea}: earlier evidence for better decisions`],
+        previewText: "Use frequent Earth observation to support earlier risk and operations decisions.",
+        body: emailBody
+      },
+      linkedIn: {
+        headline: `${form.campaignIdea} starts with earlier evidence`,
+        primaryText: makeLinkedInText(form),
+        description: form.primaryCTA
+      },
+      sdrFollowUp: {
+        opener: `${form.campaignIdea} handoff`,
+        talkTrack: makeSdrMessage(form),
+        callToAction: "Ask whether a short workflow walkthrough would be useful."
+      },
+      landingPage: {
+        headline: `See changing conditions sooner`,
+        subheadline: `Use frequent Earth observation data to support earlier assessment, regional monitoring, and campaign follow-up for ${form.targetAudience}.`,
+        proofPoints: [
+          "Monitor changing conditions across large areas",
+          "Add current visual evidence to planning workflows",
+          "Prioritize where deeper investigation is needed"
+        ],
+        formCTA: form.primaryCTA
+      }
+    }
+  };
+}
+
+function createDefaultHandoffs(owner: string): AssetHandoff[] {
+  return [
+    {
+      assetType: "email",
+      ownerRole: "Marketing Operations / Lifecycle Marketing",
+      ownerName: owner,
+      destination: "Marketing automation draft",
+      nextAction: "Review and schedule email",
+      status: "draft",
+      notes: "Integration-ready handoff. No live marketing automation write is performed.",
+      integrationMode: "integration_ready"
+    },
+    {
+      assetType: "linkedin",
+      ownerRole: "Paid Media / Growth Marketing",
+      ownerName: "Paid Media",
+      destination: "LinkedIn Campaign Manager draft",
+      nextAction: "Review copy and creative",
+      status: "draft",
+      notes: "Demo workflow. No LinkedIn campaign is launched.",
+      integrationMode: "demo"
+    },
+    {
+      assetType: "sdr",
+      ownerRole: "SDR owner / Sales",
+      ownerName: "Sales",
+      destination: "Salesforce task draft",
+      nextAction: "Assign follow-up owner",
+      status: "draft",
+      notes: "Salesforce-ready task draft only. No live Salesforce task is created.",
+      integrationMode: "integration_ready"
+    },
+    {
+      assetType: "landing_page",
+      ownerRole: "Web Marketing / Product Marketing",
+      ownerName: "Web Marketing",
+      destination: "CMS request or project-management ticket",
+      nextAction: "Review and publish update",
+      status: "draft",
+      notes: "Web-team content request prepared. No CMS update is published.",
+      integrationMode: "integration_ready"
+    }
+  ];
+}
+
+function validateForm(form: BuilderForm): ValidationErrors {
+  const errors: ValidationErrors = {};
+
+  if (!form.campaignIdea.trim()) errors.campaignIdea = "Enter a campaign idea.";
+  if (!form.targetVertical.trim()) errors.targetVertical = "Select a target vertical.";
+  if (!form.campaignGoal.trim()) errors.campaignGoal = "Enter a campaign goal.";
+  if (!form.targetAudience.trim()) errors.targetAudience = "Enter the audience this campaign should reach.";
+  if (!form.primaryCTA.trim()) errors.primaryCTA = "Enter the primary CTA.";
+  if (!form.landingPageUrl.trim()) {
+    errors.landingPageUrl = "Enter a landing-page URL.";
+  } else {
+    try {
+      new URL(form.landingPageUrl);
+    } catch {
+      errors.landingPageUrl = "Enter a valid landing-page URL.";
+    }
   }
+  if (!form.channels.length) errors.channels = "Select at least one channel.";
 
-  return (
-    <button type="button" className="copyButton" onClick={copy}>
-      {copied ? "Copied" : label}
-    </button>
-  );
-}
-
-function ScoreBar({ label, value, max = 5 }: { label: string; value: number; max?: number }) {
-  return (
-    <div className="scoreRow">
-      <div className="scoreLabel">
-        <span>{label}</span>
-        <strong>{value}/{max}</strong>
-      </div>
-      <div className="scoreTrack">
-        <div className="scoreFill" style={{ width: `${(value / max) * 100}%` }} />
-      </div>
-    </div>
-  );
+  return errors;
 }
 
 function FieldLabel({
@@ -195,255 +294,510 @@ function FieldLabel({
   );
 }
 
-function applyDeterministicChecks(output: CampaignBuilderOutput, form: BuilderForm): CampaignBuilderOutput {
-  const input = form as CampaignBuilderInput;
-  const campaignName = form.campaignName || output.campaignSummary.campaignName;
-  const utmLinks = generateUtmLinks(input, campaignName);
-  const launchChecklist = buildLaunchChecklist(input);
-  const withDeterministic = {
-    ...output,
-    campaignSummary: {
-      ...output.campaignSummary,
-      campaignName
-    },
-    utmLinks,
-    launchChecklist
-  };
-
-  return {
-    ...withDeterministic,
-    attributionReadiness: calculateAttributionReadiness(input, withDeterministic)
-  };
-}
-
-function regenerateSection(
-  result: CampaignBuilderOutput,
-  form: BuilderForm,
-  section: RegenKey,
-  count: number
-): CampaignBuilderOutput {
-  const campaignName = form.campaignName || result.campaignSummary.campaignName;
-  const variant = count + 1;
-
-  if (section === "summary") {
-    return {
-      ...result,
-      campaignSummary: {
-        ...result.campaignSummary,
-        campaignName,
-        executiveSummary: `${campaignName} turns ${form.campaignIdea.toLowerCase()} into a launch-ready motion for ${form.targetAudience}.`,
-        launchPositioning: `Lead with ${form.targetVertical} teams needing clearer evidence, faster prioritization, and a measurable next action.`
-      }
-    };
-  }
-
-  if (section === "email") {
-    return {
-      ...result,
-      copyAssets: {
-        ...result.copyAssets,
-        email: {
-          subjectLines: [
-            `${form.campaignIdea}: see the signal sooner`,
-            `A clearer next step for ${form.targetVertical}`,
-            `Turn changing conditions into action`
-          ],
-          previewText: `A practical Planet workflow for ${form.targetAudience}.`,
-          body: `Hi there,\n\n${form.campaignIdea} is built for teams that need timely, objective context before decisions become urgent. Planet can help ${form.targetAudience} monitor change, prioritize action, and move from static reporting to clearer evidence.\n\n${form.primaryCTA} to see how this could support your next campaign or account motion.`
-        }
-      }
-    };
-  }
-
-  if (section === "ads") {
-    return {
-      ...result,
-      copyAssets: {
-        ...result.copyAssets,
-        linkedIn: {
-          headline: `${form.campaignIdea} starts with better evidence`,
-          primaryText: `Your team does not need another static view. Use Planet context to spot meaningful change and focus the next ${form.salesMotion} motion.`,
-          description: form.primaryCTA
-        }
-      }
-    };
-  }
-
-  if (section === "sdr") {
-    return {
-      ...result,
-      copyAssets: {
-        ...result.copyAssets,
-        sdrFollowUp: {
-          opener: `I noticed ${form.campaignIdea.toLowerCase()} may be relevant for teams like yours.`,
-          talkTrack: `The campaign angle is simple: use timely visual evidence to prioritize where ${form.targetVertical} teams should focus next.`,
-          callToAction: form.primaryCTA
-        }
-      }
-    };
-  }
-
-  if (section === "landing") {
-    return {
-      ...result,
-      copyAssets: {
-        ...result.copyAssets,
-        landingPage: {
-          headline: `${form.campaignIdea}: move from delayed signals to earlier decisions`,
-          subheadline: `Give ${form.targetAudience} a clearer way to monitor change, prioritize action, and connect engagement to measurable campaign outcomes.`,
-          proofPoints: [
-            "Timely Earth observation context",
-            "Campaign-ready vertical messaging",
-            "Review-ready assets with attribution discipline"
-          ],
-          formCTA: form.primaryCTA
-        }
-      }
-    };
-  }
-
-  if (section === "test") {
-    return {
-      ...result,
-      abTestPlan: {
-        hypothesis: `A ${form.campaignIdea.toLowerCase()} message focused on urgency will outperform a broad education message.`,
-        variantA: `Lead with the decision risk ${variant % 2 ? "of delayed evidence" : "of missed change signals"}.`,
-        variantB: `Lead with the business outcome: ${form.campaignGoal.toLowerCase()}.`,
-        successMetric: form.campaignGoal,
-        guardrailMetric: "Lead quality and sales acceptance rate"
-      }
-    };
-  }
-
-  if (section === "checklist") {
-    return applyDeterministicChecks({ ...result, launchChecklist: buildLaunchChecklist(form) }, form);
-  }
-
-  if (section === "utms" || section === "attribution") {
-    return applyDeterministicChecks(result, form);
-  }
-
-  return result;
-}
-
-function validateForm(form: BuilderForm): ValidationErrors {
-  const errors: ValidationErrors = {};
-
-  if (!form.campaignIdea.trim()) errors.campaignIdea = "Enter a campaign idea.";
-  if (!form.targetVertical.trim()) errors.targetVertical = "Select a target vertical.";
-  if (!form.campaignGoal.trim()) errors.campaignGoal = "Enter a campaign goal.";
-  if (!form.targetAudience.trim()) errors.targetAudience = "Enter the audience this campaign should reach.";
-  if (!form.primaryCTA.trim()) errors.primaryCTA = "Enter the primary CTA.";
-  if (!form.landingPageUrl.trim()) {
-    errors.landingPageUrl = "Enter a landing-page URL.";
-  } else {
-    try {
-      new URL(form.landingPageUrl);
-    } catch {
-      errors.landingPageUrl = "Enter a valid landing-page URL.";
-    }
-  }
-  if (!form.channels.length) errors.channels = "Select at least one channel.";
-
-  return errors;
-}
-
 function FieldError({ message }: { message?: string }) {
   return message ? <p className="fieldError">{message}</p> : null;
 }
 
-function CopyAssets({
-  result,
-  onRegenerate,
-  loadingSection
-}: {
-  result: CampaignBuilderOutput;
-  onRegenerate: (section: RegenKey) => void;
-  loadingSection: RegenKey | null;
-}) {
-  const [tab, setTab] = useState<"Email" | "LinkedIn" | "SDR" | "Landing Page">("Email");
-  const assets = result.copyAssets;
-  const action =
-    tab === "Email"
-      ? { key: "email" as const, label: "Regenerate email" }
-      : tab === "LinkedIn"
-        ? { key: "ads" as const, label: "Regenerate ads" }
-        : tab === "SDR"
-          ? { key: "sdr" as const, label: "Regenerate SDR copy" }
-          : { key: "landing" as const, label: "Regenerate landing-page copy" };
-  const copyValue =
-    tab === "Email"
-      ? `${assets.email.subjectLines.join("\n")}\n\n${assets.email.previewText}\n\n${assets.email.body}`
-      : tab === "LinkedIn"
-        ? `${assets.linkedIn.headline}\n\n${assets.linkedIn.primaryText}\n\n${assets.linkedIn.description}`
-        : tab === "SDR"
-          ? `${assets.sdrFollowUp.opener}\n\n${assets.sdrFollowUp.talkTrack}\n\n${assets.sdrFollowUp.callToAction}`
-          : `${assets.landingPage.headline}\n\n${assets.landingPage.subheadline}\n\n${assets.landingPage.proofPoints.join("\n")}\n\n${assets.landingPage.formCTA}`;
+function statusLabel(status: AssetHandoff["status"]) {
+  return status.replaceAll("_", " ");
+}
+
+function CopyButton({ value, label = "Copy" }: { value: string; label?: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copy() {
+    await navigator.clipboard.writeText(value);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1200);
+  }
 
   return (
-    <article className="panel copyPanel builderWide">
-      <div className="panelHeader">
-        <p className="eyebrow">Copy assets</p>
-        <div className="actionRow">
-          <button type="button" className="copyButton" onClick={() => onRegenerate(action.key)} disabled={loadingSection === action.key}>
-            {loadingSection === action.key ? "Updating..." : action.label}
-          </button>
-          <CopyButton value={copyValue} />
+    <button type="button" className="copyButton" onClick={copy}>
+      {copied ? "Copied" : label}
+    </button>
+  );
+}
+
+function AssetActionButton({
+  asset,
+  onAction
+}: {
+  asset: AssetKey;
+  onAction: (asset: AssetKey) => void;
+}) {
+  const labels: Record<AssetKey, string> = {
+    email: "Send for approval",
+    linkedin: "Send to paid media",
+    sdr: "Create Salesforce task draft",
+    landing_page: "Notify web team"
+  };
+  return (
+    <button type="button" className="copyButton" onClick={() => onAction(asset)}>
+      {labels[asset]}
+    </button>
+  );
+}
+
+function EmailAsset({
+  result,
+  form,
+  handoff,
+  editing,
+  loading,
+  onEdit,
+  onRegenerate,
+  onHandoff,
+  onEmailChange
+}: {
+  result: CampaignBuilderOutput;
+  form: BuilderForm;
+  handoff: AssetHandoff;
+  editing: boolean;
+  loading: boolean;
+  onEdit: () => void;
+  onRegenerate: () => void;
+  onHandoff: () => void;
+  onEmailChange: (field: "subject" | "previewText" | "body", value: string) => void;
+}) {
+  const email = result.copyAssets.email;
+  const subject = email.subjectLines[0] || `See ${form.campaignIdea.toLowerCase()} sooner`;
+  const body = cleanBody(email.body, makeEmailBody(form).split(/\n\n/));
+  const copyValue = `Subject: ${subject}\nPreview text: ${email.previewText}\n\nHi {{FirstName}},\n\n${body.join("\n\n")}\n\n${form.primaryCTA}\n\nPlanet`;
+
+  return (
+    <div className="assetPreview">
+      <div className="assetInfoGrid">
+        <div><span>Asset</span><strong>Email</strong></div>
+        <div><span>Audience</span><strong>{form.targetAudience}</strong></div>
+        <div><span>Lifecycle</span><strong>{form.lifecycleStage}</strong></div>
+        <div><span>Status</span><strong>{statusLabel(handoff.status)}</strong></div>
+      </div>
+
+      <div className="emailPreview">
+        <div className="emailMeta">
+          <div><span>From</span><strong>Planet Growth Marketing</strong></div>
+          <div><span>To</span><strong>{form.targetAudience}</strong></div>
+          <div>
+            <span>Subject</span>
+            {editing ? (
+              <input value={subject} onChange={(event) => onEmailChange("subject", event.target.value)} />
+            ) : (
+              <strong>{subject}</strong>
+            )}
+          </div>
+          <div>
+            <span>Preview text</span>
+            {editing ? (
+              <input value={email.previewText} onChange={(event) => onEmailChange("previewText", event.target.value)} />
+            ) : (
+              <strong>{email.previewText}</strong>
+            )}
+          </div>
+        </div>
+        <div className="emailBody">
+          <p>Hi {"{{FirstName}},"}</p>
+          {editing ? (
+            <textarea value={email.body} onChange={(event) => onEmailChange("body", event.target.value)} />
+          ) : (
+            body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+          )}
+          <button type="button">{form.primaryCTA}</button>
+          <p>Planet</p>
         </div>
       </div>
+
+      <div className="assetActions">
+        <button type="button" className="copyButton" onClick={onEdit}>{editing ? "Done editing" : "Edit email"}</button>
+        <CopyButton value={copyValue} label="Copy email" />
+        <button type="button" className="copyButton" onClick={onRegenerate} disabled={loading}>{loading ? "Updating..." : "Regenerate email"}</button>
+        <button type="button" className="copyButton" onClick={onHandoff}>Send for approval</button>
+      </div>
+    </div>
+  );
+}
+
+function LinkedInAsset({
+  result,
+  form,
+  handoff,
+  editing,
+  loading,
+  onEdit,
+  onRegenerate,
+  onHandoff,
+  onLinkedInChange
+}: {
+  result: CampaignBuilderOutput;
+  form: BuilderForm;
+  handoff: AssetHandoff;
+  editing: boolean;
+  loading: boolean;
+  onEdit: () => void;
+  onRegenerate: () => void;
+  onHandoff: () => void;
+  onLinkedInChange: (field: "primaryText" | "headline" | "description", value: string) => void;
+}) {
+  const linkedIn = result.copyAssets.linkedIn;
+  const paragraphs = cleanBody(linkedIn.primaryText, makeLinkedInText(form).split(/\n\n/));
+  const creative = "Before-and-after imagery or a regional change-detection visual showing how conditions evolved over time.";
+  const copyValue = `${linkedIn.primaryText}\n\nHeadline: ${linkedIn.headline}\nCTA: ${linkedIn.description || form.primaryCTA}\nCreative: ${creative}`;
+
+  return (
+    <div className="assetPreview">
+      <div className="assetInfoGrid">
+        <div><span>Asset</span><strong>LinkedIn Paid</strong></div>
+        <div><span>Status</span><strong>{statusLabel(handoff.status)}</strong></div>
+        <div><span>Purpose</span><strong>Paid-social demand creation</strong></div>
+        <div><span>CTA</span><strong>{linkedIn.description || form.primaryCTA}</strong></div>
+      </div>
+      <div className="socialPreview">
+        <span>Primary text</span>
+        {editing ? (
+          <textarea value={linkedIn.primaryText} onChange={(event) => onLinkedInChange("primaryText", event.target.value)} />
+        ) : (
+          paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+        )}
+        <span>Headline</span>
+        {editing ? (
+          <input value={linkedIn.headline} onChange={(event) => onLinkedInChange("headline", event.target.value)} />
+        ) : (
+          <strong>{linkedIn.headline}</strong>
+        )}
+        <span>Suggested creative direction</span>
+        <p>{creative}</p>
+      </div>
+      <div className="assetActions">
+        <button type="button" className="copyButton" onClick={onEdit}>{editing ? "Done editing" : "Edit post"}</button>
+        <CopyButton value={copyValue} label="Copy post" />
+        <button type="button" className="copyButton" onClick={onRegenerate} disabled={loading}>{loading ? "Updating..." : "Regenerate post"}</button>
+        <button type="button" className="copyButton" onClick={onHandoff}>Send to paid media</button>
+      </div>
+    </div>
+  );
+}
+
+function SdrAsset({
+  result,
+  form,
+  handoff,
+  editing,
+  loading,
+  onEdit,
+  onRegenerate,
+  onHandoff,
+  onSdrChange
+}: {
+  result: CampaignBuilderOutput;
+  form: BuilderForm;
+  handoff: AssetHandoff;
+  editing: boolean;
+  loading: boolean;
+  onEdit: () => void;
+  onRegenerate: () => void;
+  onHandoff: () => void;
+  onSdrChange: (field: "opener" | "talkTrack" | "callToAction", value: string) => void;
+}) {
+  const sdr = result.copyAssets.sdrFollowUp;
+  const message = sdr.talkTrack || makeSdrMessage(form);
+  const copyValue = `Subject: ${sdr.opener}\n\n${message}\n\nFollow-up action: ${sdr.callToAction}`;
+
+  return (
+    <div className="assetPreview">
+      <div className="assetInfoGrid">
+        <div><span>Target persona</span><strong>{result.audienceAndPain.buyerPersonas[0] || "Growth or operations lead"}</strong></div>
+        <div><span>Context</span><strong>{form.targetAudience}</strong></div>
+        <div><span>Status</span><strong>{statusLabel(handoff.status)}</strong></div>
+        <div><span>Signal</span><strong>{form.campaignIdea}</strong></div>
+      </div>
+      <div className="handoffPreview">
+        <span>Subject line</span>
+        {editing ? (
+          <input value={sdr.opener} onChange={(event) => onSdrChange("opener", event.target.value)} />
+        ) : (
+          <strong>{sdr.opener}</strong>
+        )}
+        <span>Message</span>
+        {editing ? (
+          <textarea value={message} onChange={(event) => onSdrChange("talkTrack", event.target.value)} />
+        ) : (
+          cleanBody(message, makeSdrMessage(form).split(/\n\n/)).map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+        )}
+        <span>Suggested follow-up action</span>
+        {editing ? (
+          <input value={sdr.callToAction} onChange={(event) => onSdrChange("callToAction", event.target.value)} />
+        ) : (
+          <p>{sdr.callToAction}</p>
+        )}
+      </div>
+      <div className="assetActions">
+        <button type="button" className="copyButton" onClick={onEdit}>{editing ? "Done editing" : "Edit message"}</button>
+        <CopyButton value={copyValue} label="Copy message" />
+        <button type="button" className="copyButton" onClick={onRegenerate} disabled={loading}>{loading ? "Updating..." : "Regenerate SDR message"}</button>
+        <button type="button" className="copyButton" onClick={onHandoff}>Create Salesforce task draft</button>
+      </div>
+    </div>
+  );
+}
+
+function LandingAsset({
+  result,
+  form,
+  handoff,
+  editing,
+  loading,
+  onEdit,
+  onRegenerate,
+  onHandoff,
+  onLandingChange
+}: {
+  result: CampaignBuilderOutput;
+  form: BuilderForm;
+  handoff: AssetHandoff;
+  editing: boolean;
+  loading: boolean;
+  onEdit: () => void;
+  onRegenerate: () => void;
+  onHandoff: () => void;
+  onLandingChange: (field: "headline" | "subheadline" | "proofPoints" | "formCTA", value: string) => void;
+}) {
+  const landing = result.copyAssets.landingPage;
+  const proofPoints = landing.proofPoints.length ? landing.proofPoints : [
+    "Monitor changing conditions across large areas",
+    "Add current visual evidence to planning workflows",
+    "Prioritize where deeper investigation is needed"
+  ];
+  const copyValue = `${form.campaignIdea.toUpperCase()}\n${landing.headline}\n${landing.subheadline}\n${proofPoints.join("\n")}\n${landing.formCTA}`;
+
+  return (
+    <div className="assetPreview">
+      <div className="landingPreview">
+        <span>{form.campaignIdea.toUpperCase()}</span>
+        {editing ? (
+          <input value={landing.headline} onChange={(event) => onLandingChange("headline", event.target.value)} />
+        ) : (
+          <h3>{landing.headline}</h3>
+        )}
+        {editing ? (
+          <textarea value={landing.subheadline} onChange={(event) => onLandingChange("subheadline", event.target.value)} />
+        ) : (
+          <p>{landing.subheadline}</p>
+        )}
+        {editing ? (
+          <textarea value={proofPoints.join("\n")} onChange={(event) => onLandingChange("proofPoints", event.target.value)} />
+        ) : (
+          <ul>
+            {proofPoints.slice(0, 3).map((point) => <li key={point}>{point}</li>)}
+          </ul>
+        )}
+        <button type="button">{landing.formCTA}</button>
+      </div>
+      <div className="assetInfoGrid">
+        <div><span>Suggested page owner</span><strong>{handoff.ownerRole}</strong></div>
+        <div><span>Status</span><strong>{statusLabel(handoff.status)}</strong></div>
+      </div>
+      <div className="assetActions">
+        <button type="button" className="copyButton" onClick={onEdit}>{editing ? "Done editing" : "Edit page copy"}</button>
+        <CopyButton value={copyValue} label="Copy page copy" />
+        <button type="button" className="copyButton" onClick={onRegenerate} disabled={loading}>{loading ? "Updating..." : "Regenerate page copy"}</button>
+        <button type="button" className="copyButton" onClick={onHandoff}>Notify web team</button>
+      </div>
+    </div>
+  );
+}
+
+function CampaignAssets({
+  result,
+  form,
+  handoffs,
+  activeAsset,
+  editingAsset,
+  loadingAsset,
+  onAssetSelect,
+  onEditAsset,
+  onHandoff,
+  onRegenerate,
+  onUpdateResult
+}: {
+  result: CampaignBuilderOutput;
+  form: BuilderForm;
+  handoffs: AssetHandoff[];
+  activeAsset: AssetKey;
+  editingAsset: AssetKey | null;
+  loadingAsset: RegenKey | null;
+  onAssetSelect: (asset: AssetKey) => void;
+  onEditAsset: (asset: AssetKey) => void;
+  onHandoff: (asset: AssetKey) => void;
+  onRegenerate: (asset: RegenKey) => void;
+  onUpdateResult: (result: CampaignBuilderOutput) => void;
+}) {
+  const handoff = handoffs.find((item) => item.assetType === activeAsset) ?? createDefaultHandoffs(form.campaignOwner)[0];
+  const assetTabs = Object.keys(assetLabels) as AssetKey[];
+
+  return (
+    <article className="panel builderWide campaignAssetsSection">
+      <div className="panelHeader">
+        <div>
+          <p className="eyebrow">Campaign assets</p>
+          <h3>Review, edit, and route each asset to the team responsible for activation.</h3>
+        </div>
+        <span className="demoBadge">Demo workflow</span>
+      </div>
       <div className="tabRow">
-        {["Email", "LinkedIn", "SDR", "Landing Page"].map((item) => (
-          <button key={item} type="button" className={tab === item ? "selected" : ""} onClick={() => setTab(item as typeof tab)}>
-            {item}
+        {assetTabs.map((asset) => (
+          <button key={asset} type="button" className={activeAsset === asset ? "selected" : ""} onClick={() => onAssetSelect(asset)}>
+            {assetLabels[asset]}
           </button>
         ))}
       </div>
 
-      {tab === "Email" ? (
-        <div className="copyBlock">
-          <span>Subject lines</span>
-          <BulletList items={assets.email.subjectLines} />
-          <span>Preview</span>
-          <p>{assets.email.previewText}</p>
-          <span>Body</span>
-          <p>{assets.email.body}</p>
-        </div>
+      {activeAsset === "email" ? (
+        <EmailAsset
+          result={result}
+          form={form}
+          handoff={handoff}
+          editing={editingAsset === "email"}
+          loading={loadingAsset === "email"}
+          onEdit={() => onEditAsset("email")}
+          onRegenerate={() => onRegenerate("email")}
+          onHandoff={() => onHandoff("email")}
+          onEmailChange={(field, value) => {
+            onUpdateResult({
+              ...result,
+              copyAssets: {
+                ...result.copyAssets,
+                email: {
+                  ...result.copyAssets.email,
+                  subjectLines: field === "subject" ? [value, ...result.copyAssets.email.subjectLines.slice(1)] : result.copyAssets.email.subjectLines,
+                  previewText: field === "previewText" ? value : result.copyAssets.email.previewText,
+                  body: field === "body" ? value : result.copyAssets.email.body
+                }
+              }
+            });
+          }}
+        />
       ) : null}
 
-      {tab === "LinkedIn" ? (
-        <div className="copyBlock">
-          <span>Headline</span>
-          <strong>{assets.linkedIn.headline}</strong>
-          <span>Primary text</span>
-          <p>{assets.linkedIn.primaryText}</p>
-          <span>Description</span>
-          <p>{assets.linkedIn.description}</p>
-        </div>
+      {activeAsset === "linkedin" ? (
+        <LinkedInAsset
+          result={result}
+          form={form}
+          handoff={handoff}
+          editing={editingAsset === "linkedin"}
+          loading={loadingAsset === "linkedin"}
+          onEdit={() => onEditAsset("linkedin")}
+          onRegenerate={() => onRegenerate("linkedin")}
+          onHandoff={() => onHandoff("linkedin")}
+          onLinkedInChange={(field, value) => {
+            onUpdateResult({
+              ...result,
+              copyAssets: {
+                ...result.copyAssets,
+                linkedIn: {
+                  ...result.copyAssets.linkedIn,
+                  [field]: value
+                }
+              }
+            });
+          }}
+        />
       ) : null}
 
-      {tab === "SDR" ? (
-        <div className="copyBlock">
-          <span>Opener</span>
-          <p>{assets.sdrFollowUp.opener}</p>
-          <span>Talk track</span>
-          <p>{assets.sdrFollowUp.talkTrack}</p>
-          <span>CTA</span>
-          <p>{assets.sdrFollowUp.callToAction}</p>
-        </div>
+      {activeAsset === "sdr" ? (
+        <SdrAsset
+          result={result}
+          form={form}
+          handoff={handoff}
+          editing={editingAsset === "sdr"}
+          loading={loadingAsset === "sdr"}
+          onEdit={() => onEditAsset("sdr")}
+          onRegenerate={() => onRegenerate("sdr")}
+          onHandoff={() => onHandoff("sdr")}
+          onSdrChange={(field, value) => {
+            onUpdateResult({
+              ...result,
+              copyAssets: {
+                ...result.copyAssets,
+                sdrFollowUp: {
+                  ...result.copyAssets.sdrFollowUp,
+                  [field]: value
+                }
+              }
+            });
+          }}
+        />
       ) : null}
 
-      {tab === "Landing Page" ? (
-        <div className="copyBlock">
-          <span>Headline</span>
-          <strong>{assets.landingPage.headline}</strong>
-          <span>Subheadline</span>
-          <p>{assets.landingPage.subheadline}</p>
-          <span>Proof points</span>
-          <BulletList items={assets.landingPage.proofPoints} />
-          <span>Form CTA</span>
-          <p>{assets.landingPage.formCTA}</p>
-        </div>
+      {activeAsset === "landing_page" ? (
+        <LandingAsset
+          result={result}
+          form={form}
+          handoff={handoff}
+          editing={editingAsset === "landing_page"}
+          loading={loadingAsset === "landing_page"}
+          onEdit={() => onEditAsset("landing_page")}
+          onRegenerate={() => onRegenerate("landing_page")}
+          onHandoff={() => onHandoff("landing_page")}
+          onLandingChange={(field, value) => {
+            onUpdateResult({
+              ...result,
+              copyAssets: {
+                ...result.copyAssets,
+                landingPage: {
+                  ...result.copyAssets.landingPage,
+                  [field]: field === "proofPoints" ? value.split("\n").map((item) => item.trim()).filter(Boolean) : value
+                }
+              }
+            });
+          }}
+        />
       ) : null}
+    </article>
+  );
+}
+
+function NextActions({
+  handoffs,
+  onHandoffUpdate,
+  onHandoffAction
+}: {
+  handoffs: AssetHandoff[];
+  onHandoffUpdate: (asset: AssetKey, field: keyof AssetHandoff, value: string) => void;
+  onHandoffAction: (asset: AssetKey) => void;
+}) {
+  return (
+    <article className="panel builderWide nextActionsPanel">
+      <div className="panelHeader">
+        <div>
+          <p className="eyebrow">Next actions</p>
+          <h3>Route each generated asset to the person or system responsible for activation.</h3>
+        </div>
+        <span className="demoBadge">Integration-ready handoff</span>
+      </div>
+      <div className="handoffTable">
+        {handoffs.map((handoff) => (
+          <div key={handoff.assetType} className="handoffRow">
+            <strong>{assetLabels[handoff.assetType]}</strong>
+            <label>
+              Owner
+              <input value={handoff.ownerName || handoff.ownerRole} onChange={(event) => onHandoffUpdate(handoff.assetType, "ownerName", event.target.value)} />
+            </label>
+            <label>
+              Destination
+              <input value={handoff.destination} onChange={(event) => onHandoffUpdate(handoff.assetType, "destination", event.target.value)} />
+            </label>
+            <label>
+              Due date
+              <input type="date" value={handoff.dueDate || ""} onChange={(event) => onHandoffUpdate(handoff.assetType, "dueDate", event.target.value)} />
+            </label>
+            <label>
+              Notes
+              <input value={handoff.notes || ""} onChange={(event) => onHandoffUpdate(handoff.assetType, "notes", event.target.value)} />
+            </label>
+            <span>{statusLabel(handoff.status)}</span>
+            <AssetActionButton asset={handoff.assetType} onAction={onHandoffAction} />
+          </div>
+        ))}
+      </div>
     </article>
   );
 }
@@ -451,176 +805,167 @@ function CopyAssets({
 function CampaignBuilderResults({
   result,
   form,
-  loadingSection,
-  onRegenerate
+  handoffs,
+  activeAsset,
+  editingAsset,
+  loadingAsset,
+  handoffMessages,
+  onUpdateAndRegenerate,
+  onSaveDraft,
+  onAssetSelect,
+  onEditAsset,
+  onRegenerate,
+  onHandoffAction,
+  onHandoffUpdate,
+  onUpdateResult
 }: {
   result: CampaignBuilderOutput;
   form: BuilderForm;
-  loadingSection: RegenKey | null;
-  onRegenerate: (section: RegenKey) => void;
+  handoffs: AssetHandoff[];
+  activeAsset: AssetKey;
+  editingAsset: AssetKey | null;
+  loadingAsset: RegenKey | null;
+  handoffMessages: HandoffMessage;
+  onUpdateAndRegenerate: () => void;
+  onSaveDraft: () => void;
+  onAssetSelect: (asset: AssetKey) => void;
+  onEditAsset: (asset: AssetKey) => void;
+  onRegenerate: (asset: RegenKey) => void;
+  onHandoffAction: (asset: AssetKey) => void;
+  onHandoffUpdate: (asset: AssetKey, field: keyof AssetHandoff, value: string) => void;
+  onUpdateResult: (result: CampaignBuilderOutput) => void;
 }) {
+  const generatedCount = handoffs.length;
+  const sentForApproval = handoffs.filter((item) => item.status === "awaiting_approval").length;
+  const salesPrepared = handoffs.filter((item) => item.assetType === "sdr" && item.status === "handoff_prepared").length;
+  const webRequested = handoffs.filter((item) => item.assetType === "landing_page" && item.status === "activation_requested").length;
+
   return (
-    <section className="resultGrid campaignBuilderResults">
-      <div className="resultHero">
+    <section className="resultGrid campaignBuilderResults handoffWorkspace">
+      <article className="panel primaryPanel builderWide campaignPackageSummary">
         <div>
-          <div className="panelHeader">
-            <p className="eyebrow">Campaign Builder</p>
-            <button type="button" className="copyButton" onClick={() => onRegenerate("summary")} disabled={loadingSection === "summary"}>
-              {loadingSection === "summary" ? "Updating..." : "Regenerate campaign direction"}
-            </button>
-          </div>
+          <p className="eyebrow">Campaign package summary</p>
           <h2>{result.campaignSummary.campaignName}</h2>
-          <p>{result.campaignSummary.executiveSummary}</p>
+          <p>{result.campaignSummary.targetVertical} · {form.salesMotion} · {form.lifecycleStage} · {form.region}</p>
         </div>
-        <div className="metrics">
-          <div><span>Eval</span><strong>{result.evalScore.totalScore}/40</strong></div>
-          <div><span>Attribution</span><strong>{result.attributionReadiness.score}/100</strong></div>
-          <div><span>Status</span><strong>{result.attributionReadiness.status.replace("_", " ")}</strong></div>
-          <div className="reviewFlag warn"><span>Review</span><strong>{result.reviewFlags.length} flags</strong></div>
-        </div>
-      </div>
-
-      <article className="panel primaryPanel">
-        <p className="eyebrow">Campaign summary</p>
-        <h3>{result.campaignSummary.launchPositioning}</h3>
-        <dl className="detailList">
-          <div><dt>Vertical</dt><dd>{result.campaignSummary.targetVertical}</dd></div>
-          <div><dt>Goal</dt><dd>{result.campaignSummary.campaignGoal}</dd></div>
-          <div><dt>CTA</dt><dd>{result.campaignSummary.primaryCTA}</dd></div>
-          <div><dt>Motion</dt><dd>{result.campaignSummary.salesMotion}</dd></div>
+        <dl className="inlineFacts">
+          <div><dt>Campaign goal</dt><dd>{form.campaignGoal}</dd></div>
+          <div><dt>Audience</dt><dd>{form.targetAudience}</dd></div>
+          <div><dt>Primary CTA</dt><dd>{form.primaryCTA}</dd></div>
+          <div><dt>Assets generated</dt><dd>{generatedCount}</dd></div>
         </dl>
-      </article>
-
-      <article className="panel">
-        <p className="eyebrow">Audience + buyer pain</p>
-        <p>{result.audienceAndPain.targetAudience}</p>
-        <div className="tagList">
-          {result.audienceAndPain.buyerPersonas.map((item) => <span key={item}>{item}</span>)}
-        </div>
-        <BulletList items={result.audienceAndPain.buyerPains} />
-      </article>
-
-      <article className="panel builderWide">
-        <p className="eyebrow">Channel plan</p>
-        <div className="channelList builderChannels">
-          {result.channelPlan.map((channel) => (
-            <div key={channel.channel}>
-              <strong>{channel.channel}</strong>
-              <span>{channel.priority} · {channel.role}</span>
-              <p>{channel.recommendedUse}</p>
-              <p className="notes">{channel.opsNotes}</p>
-            </div>
-          ))}
+        <div className="assetActions">
+          <button type="button" className="primarySubmit compactPrimary" onClick={onUpdateAndRegenerate}>Update and regenerate</button>
+          <button type="button" className="copyButton" onClick={onSaveDraft}>Save draft</button>
         </div>
       </article>
 
-      <CopyAssets result={result} onRegenerate={onRegenerate} loadingSection={loadingSection} />
+      <CampaignAssets
+        result={result}
+        form={form}
+        handoffs={handoffs}
+        activeAsset={activeAsset}
+        editingAsset={editingAsset}
+        loadingAsset={loadingAsset}
+        onAssetSelect={onAssetSelect}
+        onEditAsset={onEditAsset}
+        onHandoff={onHandoffAction}
+        onRegenerate={onRegenerate}
+        onUpdateResult={onUpdateResult}
+      />
 
-      <article className="panel builderWide">
-        <div className="panelHeader">
-          <p className="eyebrow">UTM links</p>
-          <button type="button" className="copyButton" onClick={() => onRegenerate("utms")} disabled={loadingSection === "utms"}>
-            {loadingSection === "utms" ? "Recalculating..." : "Recalculate UTMs"}
-          </button>
-        </div>
-        <div className="utmTable">
-          {result.utmLinks.map((link) => (
-            <div key={`${link.channel}-${link.utm_content}`} className={link.validation.status}>
-              <strong>{link.channel}</strong>
-              <span>{link.utm_campaign}</span>
-              <code>{link.url}</code>
-              <CopyButton value={link.url} label="Copy URL" />
-              {link.validation.issues.length ? <p className="notes">{link.validation.issues.join(" ")}</p> : null}
-            </div>
-          ))}
-        </div>
-      </article>
+      <NextActions handoffs={handoffs} onHandoffUpdate={onHandoffUpdate} onHandoffAction={onHandoffAction} />
 
-      <article className="panel">
-        <div className="panelHeader">
-          <p className="eyebrow">A/B test plan</p>
-          <button type="button" className="copyButton" onClick={() => onRegenerate("test")} disabled={loadingSection === "test"}>
-            {loadingSection === "test" ? "Updating..." : "Generate new test"}
-          </button>
-        </div>
-        <p>{result.abTestPlan.hypothesis}</p>
-        <div className="variantGrid">
-          <div><span>Variant A</span><strong>{result.abTestPlan.variantA}</strong></div>
-          <div><span>Variant B</span><strong>{result.abTestPlan.variantB}</strong></div>
-        </div>
-        <p className="notes">Success: {result.abTestPlan.successMetric}</p>
-        <p className="notes">Guardrail: {result.abTestPlan.guardrailMetric}</p>
-      </article>
-
-      <article className="panel">
-        <p className="eyebrow">KPI plan</p>
-        <h3>{result.kpiPlan.primaryKpi}</h3>
-        <BulletList items={[...result.kpiPlan.secondaryKpis, ...result.kpiPlan.leadingIndicators]} />
-        <p className="notes">{result.kpiPlan.reportingNotes}</p>
-      </article>
-
-      <article className="panel warningPanel">
-        <div className="panelHeader">
-          <p className="eyebrow">Attribution readiness</p>
-          <button type="button" className="copyButton" onClick={() => onRegenerate("attribution")} disabled={loadingSection === "attribution"}>
-            {loadingSection === "attribution" ? "Checking..." : "Re-run attribution checks"}
-          </button>
-        </div>
-        <h3>{result.attributionReadiness.score}/100 · {result.attributionReadiness.status.replace("_", " ")}</h3>
-        <BulletList items={[...result.attributionReadiness.missingItems, ...result.attributionReadiness.warnings]} />
-      </article>
-
-      <article className="panel builderWide">
-        <div className="panelHeader">
-          <p className="eyebrow">Launch checklist</p>
-          <button type="button" className="copyButton" onClick={() => onRegenerate("checklist")} disabled={loadingSection === "checklist"}>
-            {loadingSection === "checklist" ? "Checking..." : "Re-run launch checks"}
-          </button>
-        </div>
-        <div className="checklistGrid">
-          {result.launchChecklist.map((item) => (
-            <div key={`${item.category}-${item.item}`} className={item.status}>
-              <span>{item.category}</span>
-              <strong>{item.item}</strong>
-              <p>{item.notes}</p>
-              <em>{item.owner} · {item.status.replace("_", " ")}</em>
-            </div>
-          ))}
-        </div>
-      </article>
-
-      <article className="panel warningPanel">
-        <p className="eyebrow">Review flags</p>
-        {result.reviewFlags.map((flag) => (
-          <div className="reviewItem" key={flag.flag}>
-            <span>{flag.severity}</span>
-            <strong>{flag.flag}</strong>
-            <p>{flag.recommendation}</p>
-          </div>
+      <article className="panel builderWide campaignHandoffSummary">
+        <p className="eyebrow">Campaign handoff</p>
+        <ul className="compactBullets">
+          <li>{generatedCount} assets generated</li>
+          <li>{sentForApproval} assets sent for approval</li>
+          <li>{salesPrepared} sales handoff prepared</li>
+          <li>{webRequested} web update requested</li>
+        </ul>
+        {Object.values(handoffMessages).filter(Boolean).map((message) => (
+          <p key={message} className="handoffNotice">{message}</p>
         ))}
+        <div className="builderPrimaryActions">
+          <Link className="primaryAction" href="/reporting">Continue to Reporting</Link>
+          <button type="button" className="secondaryAction" onClick={onUpdateAndRegenerate}>Update and regenerate</button>
+        </div>
       </article>
-
-      <article className="panel">
-        <p className="eyebrow">Evaluation</p>
-        <h3>{result.evalScore.status}</h3>
-        <ScoreBar label="Vertical relevance" value={result.evalScore.accountVerticalRelevance} />
-        <ScoreBar label="Planet fit" value={result.evalScore.planetFit} />
-        <ScoreBar label="Specificity" value={result.evalScore.campaignSpecificity} />
-        <ScoreBar label="Channel readiness" value={result.evalScore.channelReadiness} />
-        <ScoreBar label="Attribution" value={result.evalScore.attributionReadiness} />
-        <ScoreBar label="Groundedness" value={result.evalScore.groundedness} />
-        <ScoreBar label="Actionability" value={result.evalScore.actionability} />
-        <ScoreBar label="Review safety" value={result.evalScore.humanReviewSafety} />
-      </article>
-
-      <div className="builderPostActions builderWide">
-        <Link className="primaryAction" href="/attribution-review">
-          Continue to review
-        </Link>
-        <span>{form.channels.length} channels selected · {form.channels.length} asset groups generated</span>
-      </div>
     </section>
   );
+}
+
+function regenerateAsset(result: CampaignBuilderOutput, form: BuilderForm, asset: RegenKey, count: number): CampaignBuilderOutput {
+  const variant = count + 1;
+  if (asset === "summary") {
+    return polishResult({
+      ...result,
+      campaignSummary: {
+        ...result.campaignSummary,
+        campaignName: form.campaignName,
+        executiveSummary: `${form.campaignIdea} is ready for owner review, asset handoff, and campaign activation.`
+      }
+    }, form);
+  }
+  if (asset === "email") {
+    return {
+      ...result,
+      copyAssets: {
+        ...result.copyAssets,
+        email: {
+          subjectLines: [
+            `${form.campaignIdea}: earlier evidence for action`,
+            `See ${form.targetVertical.toLowerCase()} change sooner`
+          ],
+          previewText: "Use current visual context to support faster planning decisions.",
+          body: makeEmailBody(form)
+        }
+      }
+    };
+  }
+  if (asset === "linkedin") {
+    return {
+      ...result,
+      copyAssets: {
+        ...result.copyAssets,
+        linkedIn: {
+          headline: `${form.campaignIdea} needs current evidence`,
+          primaryText: makeLinkedInText(form),
+          description: form.primaryCTA
+        }
+      }
+    };
+  }
+  if (asset === "sdr") {
+    return {
+      ...result,
+      copyAssets: {
+        ...result.copyAssets,
+        sdrFollowUp: {
+          opener: `${form.campaignIdea} visibility`,
+          talkTrack: makeSdrMessage(form),
+          callToAction: variant % 2 ? "Ask whether a short workflow walkthrough would be useful." : "Offer a quick review of the campaign workflow."
+        }
+      }
+    };
+  }
+  return {
+    ...result,
+    copyAssets: {
+      ...result.copyAssets,
+      landingPage: {
+        headline: `See ${form.campaignIdea.toLowerCase()} sooner`,
+        subheadline: `Use frequent Earth observation data to support earlier assessment, monitoring, and prioritization for ${form.targetAudience}.`,
+        proofPoints: [
+          "Monitor changing conditions across large areas",
+          "Add current visual evidence to operational workflows",
+          "Prioritize where deeper investigation is needed"
+        ],
+        formCTA: form.primaryCTA
+      }
+    }
+  };
 }
 
 export default function CampaignBuilderPage() {
@@ -629,25 +974,25 @@ export default function CampaignBuilderPage() {
   const [sourceContext, setSourceContext] = useState<SourceContext>(initialState.source);
   const [campaignNameEdited, setCampaignNameEdited] = useState(Boolean(initialState.form.campaignName));
   const [result, setResult] = useState<CampaignBuilderOutput | null>(null);
+  const [handoffs, setHandoffs] = useState<AssetHandoff[]>([]);
+  const [activeAsset, setActiveAsset] = useState<AssetKey>("email");
+  const [editingAsset, setEditingAsset] = useState<AssetKey | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingAsset, setLoadingAsset] = useState<RegenKey | null>(null);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<ValidationErrors>({});
   const [generatedNotice, setGeneratedNotice] = useState(false);
-  const [sectionLoading, setSectionLoading] = useState<RegenKey | null>(null);
+  const [handoffMessages, setHandoffMessages] = useState<HandoffMessage>({});
   const [regenCounts, setRegenCounts] = useState<Record<RegenKey, number>>({
     summary: 0,
     email: 0,
-    ads: 0,
+    linkedin: 0,
     sdr: 0,
-    landing: 0,
-    test: 0,
-    utms: 0,
-    attribution: 0,
-    checklist: 0
+    landing_page: 0
   });
 
   const channelSummary = `${form.channels.length} channel${form.channels.length === 1 ? "" : "s"} selected · ${form.channels.length} asset group${form.channels.length === 1 ? "" : "s"} will be generated`;
-  const generationSummary = `This will generate ${form.channels.length} channel plan${form.channels.length === 1 ? "" : "s"}, ${form.channels.length} asset group${form.channels.length === 1 ? "" : "s"}, UTM links, one test plan, KPI recommendations, attribution checks, and a launch checklist.`;
+  const generationSummary = `This will generate campaign assets, owner handoffs, draft destinations, and a clear next action for each selected channel.`;
   const prefilledLabel = sourceContext?.sourceLabel;
 
   function updateField(key: keyof BuilderForm, value: string) {
@@ -687,8 +1032,7 @@ export default function CampaignBuilderPage() {
     setCampaignNameEdited(false);
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function generatePackage() {
     const errors = validateForm(form);
     setFieldErrors(errors);
 
@@ -713,26 +1057,51 @@ export default function CampaignBuilderPage() {
         throw new Error("Unable to generate campaign package.");
       }
 
-      setResult(payload.data);
+      setResult(polishResult(payload.data, form));
+      setHandoffs(createDefaultHandoffs(form.campaignOwner || "Growth Marketing"));
       setGeneratedNotice(true);
     } catch {
-      setError("Campaign Builder needs cleaner input before it can create a launch package.");
+      setError("Campaign Builder needs cleaner input before it can create a campaign package.");
     } finally {
       setLoading(false);
     }
   }
 
-  function handleSectionRegenerate(section: RegenKey) {
-    if (!result || sectionLoading) return;
-    setSectionLoading(section);
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await generatePackage();
+  }
+
+  function handleAssetRegenerate(asset: RegenKey) {
+    if (!result || loadingAsset) return;
+    setLoadingAsset(asset);
     window.setTimeout(() => {
-      setResult((current) => {
-        if (!current) return current;
-        return regenerateSection(current, form, section, regenCounts[section]);
-      });
-      setRegenCounts((current) => ({ ...current, [section]: current[section] + 1 }));
-      setSectionLoading(null);
+      setResult((current) => current ? regenerateAsset(current, form, asset, regenCounts[asset]) : current);
+      if (asset !== "summary") {
+        setHandoffs((current) => current.map((item) => item.assetType === asset ? { ...item, status: "draft" } : item));
+      }
+      setRegenCounts((current) => ({ ...current, [asset]: current[asset] + 1 }));
+      setLoadingAsset(null);
     }, 450);
+  }
+
+  function handleHandoffAction(asset: AssetKey) {
+    const updates: Record<AssetKey, { status: AssetHandoff["status"]; message: string }> = {
+      email: { status: "awaiting_approval", message: "Email draft routed to Marketing Operations." },
+      linkedin: { status: "activation_requested", message: "LinkedIn asset prepared for Paid Media." },
+      sdr: { status: "handoff_prepared", message: "Salesforce-ready SDR task draft created." },
+      landing_page: { status: "activation_requested", message: "Landing-page content request prepared for the Web team." }
+    };
+    setHandoffs((current) => current.map((item) => item.assetType === asset ? { ...item, status: updates[asset].status } : item));
+    setHandoffMessages((current) => ({ ...current, [asset]: updates[asset].message }));
+  }
+
+  function handleHandoffUpdate(asset: AssetKey, field: keyof AssetHandoff, value: string) {
+    setHandoffs((current) => current.map((item) => item.assetType === asset ? { ...item, [field]: value } : item));
+  }
+
+  function handleSaveDraft() {
+    setHandoffMessages((current) => ({ ...current, draft: "Campaign package draft saved locally for this demo workflow." }));
   }
 
   return (
@@ -742,13 +1111,13 @@ export default function CampaignBuilderPage() {
         <div className="signalHeroContent">
           <p className="eyebrow">Campaign Builder</p>
           <h1>Campaign builder</h1>
-          <p>Create the campaign assets, UTM links, channel plan, test plan, KPIs, and launch checklist.</p>
+          <p>Generate campaign assets, assign the next owner, and prepare each channel for activation.</p>
           <div className="modeLinks workflowNav">
             <Link href="/signals">1. Signals</Link>
             <Link href="/">2. Account</Link>
             <Link href="/campaign-idea">3. Ideas</Link>
             <Link href="/campaign-builder" className="activeLink">4. Build</Link>
-            <Link href="/attribution-review">5. Review</Link>
+            <Link href="/reporting">5. Reporting</Link>
           </div>
         </div>
       </section>
@@ -808,12 +1177,7 @@ export default function CampaignBuilderPage() {
 
             <div>
               <FieldLabel required prefilled={prefilledLabel}>Target audience</FieldLabel>
-              <textarea
-                id="targetAudience"
-                className="compactTextarea"
-                value={form.targetAudience}
-                onChange={(event) => updateField("targetAudience", event.target.value)}
-              />
+              <textarea id="targetAudience" className="compactTextarea" value={form.targetAudience} onChange={(event) => updateField("targetAudience", event.target.value)} />
               <FieldError message={fieldErrors.targetAudience} />
             </div>
 
@@ -883,34 +1247,22 @@ export default function CampaignBuilderPage() {
               <h2>Add guardrails</h2>
               <p>Add required proof points, claims to avoid, audience context, or brand instructions.</p>
             </div>
-
             <div>
               <FieldLabel optional>Messaging guidance</FieldLabel>
-              <textarea
-                id="notes"
-                className="guidanceTextarea"
-                value={form.notes}
-                onChange={(event) => updateField("notes", event.target.value)}
-                placeholder="Add required proof points, claims to avoid, audience context, or brand guidance."
-              />
+              <textarea id="notes" className="guidanceTextarea" value={form.notes} onChange={(event) => updateField("notes", event.target.value)} placeholder="Add required proof points, claims to avoid, audience context, or brand guidance." />
             </div>
           </section>
 
           <div className="campaignNamePreview">
             <div>
               <span>Campaign name</span>
-              <input
-                value={form.campaignName}
-                onChange={(event) => {
-                  setCampaignNameEdited(true);
-                  updateField("campaignName", event.target.value);
-                }}
-              />
+              <input value={form.campaignName} onChange={(event) => {
+                setCampaignNameEdited(true);
+                updateField("campaignName", event.target.value);
+              }} />
               <p>Generated from region, campaign idea, and year. Uses underscores for Salesforce, Marketo, and UTMs.</p>
             </div>
-            <button type="button" className="copyButton" onClick={recalculateName}>
-              Recalculate name
-            </button>
+            <button type="button" className="copyButton" onClick={recalculateName}>Recalculate name</button>
           </div>
 
           <div className="generationSummary">
@@ -921,11 +1273,7 @@ export default function CampaignBuilderPage() {
             <button className="primarySubmit" type="submit" disabled={loading}>
               {loading ? "Generating campaign package..." : result ? "Update and regenerate" : "Generate campaign package"}
             </button>
-            {result ? (
-              <Link className="secondaryAction" href="/attribution-review">
-                Continue to review
-              </Link>
-            ) : null}
+            {result ? <Link className="secondaryAction" href="/reporting">Continue to Reporting</Link> : null}
           </div>
         </form>
       </section>
@@ -958,8 +1306,19 @@ export default function CampaignBuilderPage() {
         <CampaignBuilderResults
           result={result}
           form={form}
-          loadingSection={sectionLoading}
-          onRegenerate={handleSectionRegenerate}
+          handoffs={handoffs}
+          activeAsset={activeAsset}
+          editingAsset={editingAsset}
+          loadingAsset={loadingAsset}
+          handoffMessages={handoffMessages}
+          onUpdateAndRegenerate={generatePackage}
+          onSaveDraft={handleSaveDraft}
+          onAssetSelect={setActiveAsset}
+          onEditAsset={(asset) => setEditingAsset((current) => current === asset ? null : asset)}
+          onRegenerate={handleAssetRegenerate}
+          onHandoffAction={handleHandoffAction}
+          onHandoffUpdate={handleHandoffUpdate}
+          onUpdateResult={setResult}
         />
       ) : null}
     </main>

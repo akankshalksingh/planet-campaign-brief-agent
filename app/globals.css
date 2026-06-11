@@ -1078,6 +1078,326 @@ main {
   color: var(--planet-muted);
 }
 
+.handoffWorkspace {
+  align-items: start;
+}
+
+.campaignPackageSummary {
+  display: grid;
+  gap: 1rem;
+}
+
+.campaignPackageSummary h2,
+.reportingOverview h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.compactPrimary {
+  width: auto;
+  padding: 0.75rem 0.95rem;
+}
+
+.campaignAssetsSection h3,
+.nextActionsPanel h3 {
+  margin: 0.25rem 0 0;
+  font-size: 1rem;
+  color: var(--planet-muted);
+}
+
+.demoBadge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid rgba(125, 227, 230, 0.22);
+  background: rgba(125, 227, 230, 0.08);
+  color: var(--planet-cyan-soft);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 0.32rem 0.48rem;
+  text-transform: uppercase;
+}
+
+.assetPreview {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.assetInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.assetInfoGrid div {
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(5, 7, 7, 0.38);
+  padding: 0.7rem;
+}
+
+.assetInfoGrid span,
+.emailMeta span,
+.socialPreview span,
+.handoffPreview span,
+.landingPreview span {
+  display: block;
+  color: var(--planet-cyan-soft);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.assetInfoGrid strong,
+.emailMeta strong {
+  display: block;
+  margin-top: 0.28rem;
+  color: var(--planet-text);
+  line-height: 1.35;
+}
+
+.emailPreview,
+.socialPreview,
+.handoffPreview,
+.landingPreview {
+  border: 1px solid rgba(125, 227, 230, 0.16);
+  background: rgba(1, 12, 12, 0.5);
+  padding: 1rem;
+}
+
+.emailMeta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  border-bottom: 1px solid rgba(125, 227, 230, 0.13);
+  padding-bottom: 0.85rem;
+}
+
+.emailBody {
+  max-width: 720px;
+  margin-top: 1rem;
+}
+
+.emailBody p,
+.socialPreview p,
+.handoffPreview p,
+.landingPreview p {
+  color: var(--planet-muted);
+  line-height: 1.62;
+}
+
+.emailBody button,
+.landingPreview button {
+  border: 1px solid rgba(125, 227, 230, 0.45);
+  background: var(--planet-cyan);
+  color: #001314;
+  font-weight: 900;
+  padding: 0.68rem 0.85rem;
+}
+
+.emailPreview input,
+.emailPreview textarea,
+.socialPreview input,
+.socialPreview textarea,
+.handoffPreview input,
+.handoffPreview textarea,
+.landingPreview input,
+.landingPreview textarea,
+.handoffRow input,
+.reportFilters select {
+  width: 100%;
+  border: 1px solid rgba(125, 227, 230, 0.2);
+  background: #071011;
+  color: var(--planet-text);
+  font: inherit;
+  padding: 0.65rem 0.75rem;
+}
+
+.emailPreview textarea,
+.socialPreview textarea,
+.handoffPreview textarea,
+.landingPreview textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.socialPreview,
+.handoffPreview,
+.landingPreview {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.landingPreview h3 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+}
+
+.landingPreview ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--planet-muted);
+  line-height: 1.55;
+}
+
+.assetActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.handoffTable {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.handoffRow {
+  display: grid;
+  grid-template-columns: 0.75fr 1fr 1.2fr 0.75fr 1fr 0.7fr auto;
+  gap: 0.6rem;
+  align-items: end;
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(5, 7, 7, 0.38);
+  padding: 0.8rem;
+}
+
+.handoffRow label {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--planet-subtle);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.handoffRow > strong,
+.handoffRow > span {
+  color: var(--planet-text);
+  font-weight: 900;
+}
+
+.handoffNotice {
+  border-left: 3px solid var(--planet-cyan);
+  background: rgba(125, 227, 230, 0.08);
+  color: var(--planet-cyan-soft);
+  padding: 0.65rem 0.8rem;
+}
+
+.campaignHandoffSummary .builderPrimaryActions {
+  margin-top: 1rem;
+}
+
+.reportingGrid {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 2rem auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.reportingOverview {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 1rem;
+}
+
+.reportFilters,
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.reportFilters label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--planet-subtle);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.kpiGrid div {
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(5, 7, 7, 0.42);
+  padding: 0.9rem;
+}
+
+.kpiGrid span {
+  display: block;
+  color: var(--planet-subtle);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.kpiGrid strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1.45rem;
+}
+
+.performanceTable {
+  display: grid;
+  gap: 1px;
+  overflow-x: auto;
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(125, 227, 230, 0.14);
+}
+
+.performanceTable > div {
+  display: grid;
+  grid-template-columns: 1fr repeat(4, minmax(130px, 0.8fr));
+  gap: 1px;
+  min-width: 760px;
+}
+
+.performanceTable span,
+.performanceTable strong {
+  background: rgba(5, 7, 7, 0.86);
+  padding: 0.75rem;
+}
+
+.performanceTable .tableHeader span {
+  color: var(--planet-cyan-soft);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.funnelRow {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.funnelRow div {
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(5, 7, 7, 0.42);
+  padding: 0.85rem;
+}
+
+.funnelRow span,
+.funnelRow em {
+  display: block;
+  color: var(--planet-subtle);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.funnelRow strong {
+  display: block;
+  margin: 0.35rem 0;
+  font-size: 1.25rem;
+}
+
 .builderWide {
   grid-column: 1 / -1;
 }
@@ -1690,6 +2010,12 @@ main {
   .accountDecision,
   .decisionHero,
   .fitColumns,
+  .assetInfoGrid,
+  .emailMeta,
+  .reportingGrid,
+  .reportFilters,
+  .kpiGrid,
+  .funnelRow,
   .signalGrid,
   .signalDetailHeroContent,
   .signalCardHeader,
@@ -1730,9 +2056,14 @@ main {
   .builtFromCard,
   .campaignNamePreview,
   .builderPrimaryActions,
-  .builderPostActions {
+  .builderPostActions,
+  .panelHeader {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .handoffRow {
+    grid-template-columns: 1fr;
   }
 
   .hero h1,

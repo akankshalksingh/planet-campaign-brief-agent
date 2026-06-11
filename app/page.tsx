@@ -56,7 +56,7 @@ export default function Home() {
             <Link href="/" className="activeLink">2. Account</Link>
             <Link href="/campaign-idea">3. Ideas</Link>
             <Link href="/campaign-builder">4. Build</Link>
-            <Link href="/attribution-review">5. Review</Link>
+            <Link href="/reporting">5. Reporting</Link>
           </div>
         </div>
       </section>
@@ -124,8 +124,8 @@ export default function Home() {
           </div>
           <div>
             <span>04</span>
-            <strong>Review</strong>
-            <p>Risk flags and quality scores keep the workflow human-approved.</p>
+            <strong>Reporting</strong>
+            <p>Activation and engagement metrics connect the campaign to business outcomes.</p>
           </div>
         </section>
       ) : null}
