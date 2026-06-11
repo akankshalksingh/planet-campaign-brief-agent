@@ -20,6 +20,7 @@ const score5 = z.number().int().min(1).max(5);
 
 export const CampaignBuilderInputSchema = z.object({
   campaignIdea: z.string().trim().min(3).max(2000),
+  campaignName: z.string().trim().min(3).max(180).optional(),
   targetVertical: z.string().trim().min(2).max(120),
   targetAudience: z.string().trim().min(5).max(2000),
   campaignGoal: z.string().trim().min(3).max(300),

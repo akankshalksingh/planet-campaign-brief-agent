@@ -59,11 +59,15 @@ function buildEvidence(input: CampaignBuilderInput): CampaignBuilderOutput["evid
 }
 
 function finalizeOutput(input: CampaignBuilderInput, generated: z.infer<typeof generatedSchema>) {
-  const campaignName = generated.campaignSummary.campaignName;
+  const campaignName = input.campaignName?.trim() || generated.campaignSummary.campaignName;
   const utmLinks = generateUtmLinks(input, campaignName);
   const launchChecklist = buildLaunchChecklist(input);
   const draft = {
     ...generated,
+    campaignSummary: {
+      ...generated.campaignSummary,
+      campaignName
+    },
     utmLinks,
     launchChecklist,
     attributionReadiness: {

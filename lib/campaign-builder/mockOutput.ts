@@ -62,7 +62,7 @@ export function buildMockCampaignPackage(
   input: CampaignBuilderInput,
   evidence: CampaignBuilderOutput["evidenceUsed"]
 ): CampaignBuilderOutput {
-  const campaignName = titleCase(input.campaignIdea);
+  const campaignName = input.campaignName?.trim() || titleCase(input.campaignIdea);
   const audience = input.targetAudience;
   const channelPlan = input.channels.map((channel) => {
     const rule = channelRuleList.find((item) => item.channel === channel);

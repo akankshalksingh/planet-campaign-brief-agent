@@ -878,6 +878,206 @@ main {
   flex: 1 1 9rem;
 }
 
+.guidedBuilderForm {
+  gap: 1rem;
+}
+
+.guidedBuilderForm .formHeader p:not(.eyebrow) {
+  margin: 0.35rem 0 0;
+  color: var(--planet-muted);
+  line-height: 1.45;
+}
+
+.builtFromCard,
+.builderSetupSection,
+.campaignNamePreview,
+.generationSummary,
+.successPanel {
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(5, 7, 7, 0.34);
+  padding: 1rem;
+}
+
+.builtFromCard,
+.campaignNamePreview,
+.builderPrimaryActions,
+.builderPostActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.builtFromCard span,
+.campaignNamePreview span {
+  display: block;
+  color: var(--planet-cyan-soft);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.builtFromCard strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--planet-text);
+  font-size: 1.05rem;
+}
+
+.builtFromCard p,
+.campaignNamePreview p,
+.generationSummary p,
+.builderSummaryLine {
+  margin: 0.35rem 0 0;
+  color: var(--planet-muted);
+  line-height: 1.45;
+}
+
+.builderSetupSection {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.setupSectionIntro {
+  border-bottom: 1px solid rgba(125, 227, 230, 0.12);
+  padding-bottom: 0.85rem;
+}
+
+.setupSectionIntro h2 {
+  margin: 0.25rem 0 0;
+  font-size: 1.1rem;
+}
+
+.setupSectionIntro p:not(.eyebrow) {
+  margin: 0.35rem 0 0;
+  color: var(--planet-muted);
+}
+
+.guidedBuilderForm label span {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.guidedBuilderForm label em {
+  border: 1px solid rgba(125, 227, 230, 0.18);
+  background: rgba(125, 227, 230, 0.06);
+  color: var(--planet-cyan-soft);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 900;
+  padding: 0.18rem 0.32rem;
+  text-transform: uppercase;
+}
+
+.compactTextarea {
+  min-height: 5rem;
+}
+
+.guidanceTextarea {
+  min-height: 9rem;
+}
+
+.channelChipGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.channelChipGrid button {
+  min-height: 3.15rem;
+  border: 1px solid rgba(125, 227, 230, 0.22);
+  background: rgba(125, 227, 230, 0.07);
+  color: var(--planet-cyan-soft);
+  font-weight: 900;
+  padding: 0.62rem;
+}
+
+.channelChipGrid button.selected {
+  border-color: var(--planet-cyan-soft);
+  background: var(--planet-cyan);
+  color: #001314;
+}
+
+.advancedSettings {
+  border-top: 1px solid rgba(125, 227, 230, 0.12);
+  padding-top: 0.75rem;
+}
+
+.advancedSettings summary {
+  cursor: pointer;
+  color: var(--planet-cyan-soft);
+  font-weight: 900;
+}
+
+.advancedSettings .formTwoCol {
+  margin-top: 0.85rem;
+}
+
+.campaignNamePreview input {
+  width: min(32rem, 100%);
+  margin-top: 0.35rem;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+.generationSummary {
+  border-left: 3px solid var(--planet-cyan);
+}
+
+.secondaryAction {
+  border: 1px solid rgba(125, 227, 230, 0.28);
+  color: var(--planet-cyan-soft);
+  font-weight: 900;
+  padding: 0.72rem 0.95rem;
+  text-decoration: none;
+}
+
+.fieldError {
+  margin: 0.35rem 0 0;
+  color: var(--planet-risk);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.successPanel {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 1rem auto;
+  border-color: rgba(125, 227, 230, 0.34);
+}
+
+.successPanel strong {
+  color: var(--planet-cyan-soft);
+}
+
+.successPanel p {
+  margin: 0.35rem 0 0;
+  color: var(--planet-muted);
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: flex-end;
+}
+
+.copyButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.builderPostActions {
+  border: 1px solid rgba(125, 227, 230, 0.14);
+  background: rgba(14, 21, 22, 0.88);
+  padding: 1rem;
+}
+
+.builderPostActions span {
+  color: var(--planet-muted);
+}
+
 .builderWide {
   grid-column: 1 / -1;
 }
@@ -1512,6 +1712,7 @@ main {
   .structuredFilters,
   .evidenceList,
   .builderChannels,
+  .channelChipGrid,
   .checklistGrid,
   .formTwoCol {
     grid-template-columns: 1fr;
@@ -1524,6 +1725,14 @@ main {
   .compactScoreGrid,
   .variantGrid {
     grid-template-columns: 1fr;
+  }
+
+  .builtFromCard,
+  .campaignNamePreview,
+  .builderPrimaryActions,
+  .builderPostActions {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .hero h1,
