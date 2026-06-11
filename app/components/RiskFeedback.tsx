@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 export function RiskFeedback({ riskTitle }: { riskTitle: string }) {
+  const noteId = useId();
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
+  const [note, setNote] = useState("");
 
   return (
     <div className="riskFeedback" aria-label={`Account manager feedback for ${riskTitle}`}>
       <span>Account manager feedback</span>
-      <div>
+      <div className="riskFeedbackActions">
         <button
           type="button"
           className={feedback === "up" ? "selected" : ""}
@@ -29,7 +31,16 @@ export function RiskFeedback({ riskTitle }: { riskTitle: string }) {
         </button>
       </div>
       {feedback ? (
-        <p>{feedback === "up" ? "Marked useful for account review." : "Marked for revision before account review."}</p>
+        <div className="riskFeedbackNote">
+          <p>{feedback === "up" ? "Marked useful for account review." : "Marked for revision before account review."}</p>
+          <label htmlFor={noteId}>Additional feedback</label>
+          <textarea
+            id={noteId}
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            placeholder="Add account manager context, correction, or next-step guidance."
+          />
+        </div>
       ) : null}
     </div>
   );
