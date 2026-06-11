@@ -6,6 +6,12 @@ export function RiskFeedback({ riskTitle }: { riskTitle: string }) {
   const noteId = useId();
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
   const [note, setNote] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleFeedback(nextFeedback: "up" | "down") {
+    setFeedback(feedback === nextFeedback ? null : nextFeedback);
+    setSubmitted(false);
+  }
 
   return (
     <div className="riskFeedback" aria-label={`Account manager feedback for ${riskTitle}`}>
@@ -14,7 +20,7 @@ export function RiskFeedback({ riskTitle }: { riskTitle: string }) {
         <button
           type="button"
           className={feedback === "up" ? "selected" : ""}
-          onClick={() => setFeedback(feedback === "up" ? null : "up")}
+          onClick={() => handleFeedback("up")}
           aria-pressed={feedback === "up"}
           title="This risk is useful"
         >
@@ -23,7 +29,7 @@ export function RiskFeedback({ riskTitle }: { riskTitle: string }) {
         <button
           type="button"
           className={feedback === "down" ? "selected" : ""}
-          onClick={() => setFeedback(feedback === "down" ? null : "down")}
+          onClick={() => handleFeedback("down")}
           aria-pressed={feedback === "down"}
           title="This risk is not useful"
         >
@@ -37,9 +43,22 @@ export function RiskFeedback({ riskTitle }: { riskTitle: string }) {
           <textarea
             id={noteId}
             value={note}
-            onChange={(event) => setNote(event.target.value)}
+            onChange={(event) => {
+              setNote(event.target.value);
+              setSubmitted(false);
+            }}
             placeholder="Add account manager context, correction, or next-step guidance."
           />
+          <div className="riskFeedbackSubmit">
+            <button
+              type="button"
+              onClick={() => setSubmitted(true)}
+              disabled={!note.trim()}
+            >
+              Submit feedback
+            </button>
+            {submitted ? <span>Feedback noted for review.</span> : null}
+          </div>
         </div>
       ) : null}
     </div>

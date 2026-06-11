@@ -1050,6 +1050,35 @@ main {
   outline-offset: 2px;
 }
 
+.riskFeedbackSubmit {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 0.65rem;
+}
+
+.riskFeedback .riskFeedbackSubmit button {
+  background: var(--planet-cyan);
+  border-color: rgba(125, 227, 230, 0.52);
+  color: #001314;
+  font-size: 0.84rem;
+  font-weight: 900;
+  line-height: 1;
+  padding: 0.68rem 0.82rem;
+}
+
+.riskFeedback .riskFeedbackSubmit button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.riskFeedbackSubmit span {
+  color: var(--planet-cyan-soft);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
 .signalHero {
   position: relative;
   width: 100%;
