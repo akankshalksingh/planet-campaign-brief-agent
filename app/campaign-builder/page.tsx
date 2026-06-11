@@ -157,7 +157,7 @@ function CampaignBuilderResults({
     <section className="resultGrid campaignBuilderResults">
       <div className="resultHero">
         <div>
-          <p className="eyebrow">Campaign Builder V2</p>
+          <p className="eyebrow">Campaign Builder</p>
           <h2>{result.campaignSummary.campaignName}</h2>
           <p>{result.campaignSummary.executiveSummary}</p>
         </div>
@@ -377,7 +377,7 @@ export default function CampaignBuilderPage() {
       <section className="signalHero">
         <OrbitField />
         <div className="signalHeroContent">
-          <p className="eyebrow">Campaign Execution</p>
+          <p className="eyebrow">Campaign Builder</p>
           <h1>Campaign builder</h1>
           <p>
             Create the campaign assets, UTM links, channel plan, test plan, KPIs, and launch
