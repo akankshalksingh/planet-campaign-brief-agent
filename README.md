@@ -1,6 +1,6 @@
 # GTM Intelligence Studio
 
-> **Demo Data Disclaimer**
+> **Disclaimer**
 > This project is a demonstration built entirely with fictional companies, mock account signals, sample campaign content, and simulated performance data. No information shown in this application was obtained from any company, employer, customer, CRM, marketing platform, or private database. The application is not connected to live systems and does not represent the actual strategy, customers, campaigns, data, or operations of any organization.
 
 From account signals to campaign strategy in minutes.
