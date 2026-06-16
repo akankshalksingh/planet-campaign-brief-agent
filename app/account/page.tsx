@@ -1,0 +1,134 @@
+"use client";
+
+import Link from "next/link";
+import { FormEvent, useState } from "react";
+import { BriefView } from "@/app/components/BriefView";
+import { OrbitField } from "@/app/components/OrbitField";
+import { CampaignBrief } from "@/lib/types";
+
+const examples = ["Syngenta", "AXA", "Port of Rotterdam", "NASA", "Lockheed Martin", "Uber", "Apple"];
+
+export default function Home() {
+  const [companyName, setCompanyName] = useState("Syngenta");
+  const [brief, setBrief] = useState<CampaignBrief | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+    setBrief(null);
+
+    try {
+      const response = await fetch("/api/brief", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ companyName })
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to generate brief.");
+      }
+
+      setBrief(payload.brief);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to generate brief.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main>
+      <section className="signalHero">
+        <OrbitField />
+        <div className="signalHeroContent">
+          <p className="eyebrow">GTM Signal</p>
+          <h1>Target account intelligence</h1>
+          <p>
+            Research an account, understand its strongest Planet use case, and generate a focused
+            campaign brief.
+          </p>
+          <div className="modeLinks workflowNav">
+            <Link href="/signals">1. Signals</Link>
+            <Link href="/account" className="activeLink">2. Account</Link>
+            <Link href="/campaign-idea">3. Ideas</Link>
+            <Link href="/campaign-builder">4. Build</Link>
+            <Link href="/reporting">5. Reporting</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="workflowFormBand">
+        <form className="briefForm workflowForm" onSubmit={handleSubmit}>
+          <label htmlFor="companyName">Target account</label>
+          <div className="inputRow">
+            <input
+              id="companyName"
+              value={companyName}
+              onChange={(event) => setCompanyName(event.target.value)}
+              placeholder="Enter a company name"
+              autoComplete="organization"
+            />
+            <button type="submit" disabled={loading || companyName.trim().length < 2}>
+              {loading ? "Generating" : "Generate brief"}
+            </button>
+          </div>
+          <div className="exampleBar" aria-label="Example companies">
+            {examples.map((example) => (
+              <button type="button" key={example} onClick={() => setCompanyName(example)}>
+                {example}
+              </button>
+            ))}
+          </div>
+        </form>
+      </section>
+
+      {error ? (
+        <section className="errorPanel">
+          <strong>Brief generation needs attention</strong>
+          <p>{error}</p>
+        </section>
+      ) : null}
+
+      {loading ? (
+        <section className="loadingPanel">
+          <div className="pulse" />
+          <div>
+            <p className="eyebrow">Agent running</p>
+            <p>Searching, classifying, retrieving approved context, generating, and evaluating.</p>
+          </div>
+        </section>
+      ) : null}
+
+      {brief ? <BriefView brief={brief} /> : null}
+
+      {!brief && !loading ? (
+        <section className="workflowBand">
+          <div>
+            <span>01</span>
+            <strong>Research</strong>
+            <p>Live search context with source snippets and conservative fallbacks.</p>
+          </div>
+          <div>
+            <span>02</span>
+            <strong>Retrieve</strong>
+            <p>Approved Planet vertical messaging is retrieved before generation.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>Create</strong>
+            <p>Generate campaign angles, copy starters, audiences, experiments, and KPIs.</p>
+          </div>
+          <div>
+            <span>04</span>
+            <strong>Reporting</strong>
+            <p>Activation and engagement metrics connect the campaign to business outcomes.</p>
+          </div>
+        </section>
+      ) : null}
+    </main>
+  );
+}

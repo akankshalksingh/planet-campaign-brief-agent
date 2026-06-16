@@ -1188,7 +1188,7 @@ export default function CampaignBuilderPage() {
           <p>Generate campaign assets, assign the next owner, and prepare each channel for activation.</p>
           <div className="modeLinks workflowNav">
             <Link href="/signals">1. Signals</Link>
-            <Link href="/">2. Account</Link>
+            <Link href="/account">2. Account</Link>
             <Link href="/campaign-idea">3. Ideas</Link>
             <Link href="/campaign-builder" className="activeLink">4. Build</Link>
             <Link href="/reporting">5. Reporting</Link>

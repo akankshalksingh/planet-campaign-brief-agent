@@ -22,7 +22,7 @@ export default async function SignalDetailPage({ params }: { params: Promise<{ i
             <p>{signal.sourceDetail}</p>
             <div className="modeLinks workflowNav">
               <Link href="/signals">1. Signals</Link>
-              <Link href="/" className="activeLink">2. Account</Link>
+              <Link href="/account" className="activeLink">2. Account</Link>
               <Link href={`/signals/${signal.id}/ideas`}>3. Ideas</Link>
               <Link href={`/campaign-builder?signal=${signal.id}`}>4. Build</Link>
               <Link href="/reporting">5. Reporting</Link>

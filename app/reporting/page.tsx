@@ -82,7 +82,7 @@ export default function ReportingPage() {
           <p>Track what was activated, how audiences engaged, and what moved the campaign forward.</p>
           <div className="modeLinks workflowNav">
             <Link href="/signals">1. Signals</Link>
-            <Link href="/">2. Account</Link>
+            <Link href="/account">2. Account</Link>
             <Link href="/campaign-idea">3. Ideas</Link>
             <Link href="/campaign-builder">4. Build</Link>
             <Link href="/reporting" className="activeLink">5. Reporting</Link>

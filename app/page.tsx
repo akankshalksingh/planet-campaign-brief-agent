@@ -1,134 +1,105 @@
-"use client";
-
 import Link from "next/link";
-import { FormEvent, useState } from "react";
-import { BriefView } from "@/app/components/BriefView";
-import { OrbitField } from "@/app/components/OrbitField";
-import { CampaignBrief } from "@/lib/types";
 
-const examples = ["Syngenta", "AXA", "Port of Rotterdam", "NASA", "Lockheed Martin", "Uber", "Apple"];
-
-export default function Home() {
-  const [companyName, setCompanyName] = useState("Syngenta");
-  const [brief, setBrief] = useState<CampaignBrief | null>(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setLoading(true);
-    setError("");
-    setBrief(null);
-
-    try {
-      const response = await fetch("/api/brief", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ companyName })
-      });
-      const payload = await response.json();
-
-      if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to generate brief.");
-      }
-
-      setBrief(payload.brief);
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Unable to generate brief.");
-    } finally {
-      setLoading(false);
-    }
+const workflowSteps = [
+  {
+    step: "01",
+    title: "Review Signals",
+    description: "Identify accounts showing meaningful activity."
+  },
+  {
+    step: "02",
+    title: "Understand the Account",
+    description: "Review intent, account fit, supporting evidence, and possible risks."
+  },
+  {
+    step: "03",
+    title: "Choose a Campaign Idea",
+    description: "Compare, edit, or regenerate possible campaign directions."
+  },
+  {
+    step: "04",
+    title: "Build the Campaign",
+    description: "Prepare campaign assets and recommended next actions."
+  },
+  {
+    step: "05",
+    title: "Measure Results",
+    description: "Review simulated campaign and funnel performance."
   }
+];
 
+export default function LandingPage() {
   return (
-    <main>
-      <section className="signalHero">
-        <OrbitField />
-        <div className="signalHeroContent">
-          <p className="eyebrow">GTM Signal</p>
-          <h1>Target account intelligence</h1>
-          <p>
-            Research an account, understand its strongest Planet use case, and generate a focused
-            campaign brief.
+    <main className="landingPage">
+      <nav className="landingNav" aria-label="Landing page navigation">
+        <Link className="landingBrand" href="/">GTM Intelligence Studio</Link>
+        <div>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#demo-data">Demo Data</a>
+          <Link className="navCta" href="/signals">Launch Workspace</Link>
+        </div>
+      </nav>
+
+      <section className="landingHero">
+        <div className="landingHeroInner">
+          <p className="eyebrow">AI-Assisted GTM Workflow</p>
+          <h1>Turn GTM signals into coordinated action.</h1>
+          <p className="landingLead">
+            GTM Intelligence Studio is an AI-assisted demonstration that shows how account signals
+            can move through research, intent analysis, campaign planning, asset creation,
+            ownership, and performance measurement.
           </p>
-          <div className="modeLinks workflowNav">
-            <Link href="/signals">1. Signals</Link>
-            <Link href="/" className="activeLink">2. Account</Link>
-            <Link href="/campaign-idea">3. Ideas</Link>
-            <Link href="/campaign-builder">4. Build</Link>
-            <Link href="/reporting">5. Reporting</Link>
+          <p className="landingSupport">
+            The workflow helps users review account activity, understand intent, compare campaign
+            ideas, prepare channel-specific assets, and track simulated outcomes.
+          </p>
+          <div className="landingActions">
+            <Link className="primaryAction" href="/signals">Explore the Demo Workflow</Link>
+            <a className="secondaryAction" href="#how-it-works">See How It Works</a>
           </div>
         </div>
       </section>
 
-      <section className="workflowFormBand">
-        <form className="briefForm workflowForm" onSubmit={handleSubmit}>
-          <label htmlFor="companyName">Target account</label>
-          <div className="inputRow">
-            <input
-              id="companyName"
-              value={companyName}
-              onChange={(event) => setCompanyName(event.target.value)}
-              placeholder="Enter a company name"
-              autoComplete="organization"
-            />
-            <button type="submit" disabled={loading || companyName.trim().length < 2}>
-              {loading ? "Generating" : "Generate brief"}
-            </button>
-          </div>
-          <div className="exampleBar" aria-label="Example companies">
-            {examples.map((example) => (
-              <button type="button" key={example} onClick={() => setCompanyName(example)}>
-                {example}
-              </button>
-            ))}
-          </div>
-        </form>
+      <section className="landingSection landingDisclaimerSection" id="demo-data">
+        <article className="disclaimerCard">
+          <p className="eyebrow">Demo Data Disclaimer</p>
+          <h2>Demo Data Disclaimer</h2>
+          <p>
+            This application is a demonstration built entirely with fictional companies, mock account
+            signals, sample campaign content, and simulated performance metrics.
+          </p>
+          <p>
+            No data shown in this application was obtained from, provided by, or sourced from any
+            company, employer, customer, CRM, marketing platform, or private database. All examples
+            were independently created solely to demonstrate the workflow.
+          </p>
+          <p>
+            The application is not connected to any live systems and does not represent the actual
+            data, customers, campaigns, strategy, business activity, or internal operations of any
+            organization.
+          </p>
+        </article>
       </section>
 
-      {error ? (
-        <section className="errorPanel">
-          <strong>Brief generation needs attention</strong>
-          <p>{error}</p>
-        </section>
-      ) : null}
-
-      {loading ? (
-        <section className="loadingPanel">
-          <div className="pulse" />
-          <div>
-            <p className="eyebrow">Agent running</p>
-            <p>Searching, classifying, retrieving approved context, generating, and evaluating.</p>
-          </div>
-        </section>
-      ) : null}
-
-      {brief ? <BriefView brief={brief} /> : null}
-
-      {!brief && !loading ? (
-        <section className="workflowBand">
-          <div>
-            <span>01</span>
-            <strong>Research</strong>
-            <p>Live search context with source snippets and conservative fallbacks.</p>
-          </div>
-          <div>
-            <span>02</span>
-            <strong>Retrieve</strong>
-            <p>Approved Planet vertical messaging is retrieved before generation.</p>
-          </div>
-          <div>
-            <span>03</span>
-            <strong>Create</strong>
-            <p>Generate campaign angles, copy starters, audiences, experiments, and KPIs.</p>
-          </div>
-          <div>
-            <span>04</span>
-            <strong>Reporting</strong>
-            <p>Activation and engagement metrics connect the campaign to business outcomes.</p>
-          </div>
-        </section>
-      ) : null}
+      <section className="landingSection" id="how-it-works">
+        <div className="sectionIntro">
+          <p className="eyebrow">How it works</p>
+          <h2>How the demo workflow works.</h2>
+          <p>
+            Follow a fictional account signal from initial review through campaign planning, asset
+            preparation, and simulated reporting.
+          </p>
+        </div>
+        <div className="workflowCards">
+          {workflowSteps.map((item) => (
+            <article key={item.step} className="workflowStepCard">
+              <span>{item.step}</span>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

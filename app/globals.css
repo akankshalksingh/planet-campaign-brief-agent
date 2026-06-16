@@ -56,6 +56,187 @@ main {
   min-height: 100vh;
 }
 
+.landingPage {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(0, 157, 165, 0.22), transparent 30rem),
+    linear-gradient(rgba(125, 227, 230, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 227, 230, 0.035) 1px, transparent 1px),
+    var(--studio-bg);
+  background-size: auto, 44px 44px, 44px 44px, auto;
+}
+
+.landingNav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1rem 0;
+  backdrop-filter: blur(14px);
+}
+
+.landingNav a {
+  color: var(--studio-muted);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.landingNav > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.9rem;
+}
+
+.landingNav .landingBrand {
+  color: var(--studio-text);
+  font-size: 0.95rem;
+}
+
+.landingNav .navCta {
+  border: 1px solid rgba(125, 227, 230, 0.28);
+  background: rgba(125, 227, 230, 0.08);
+  color: var(--studio-cyan-soft);
+  padding: 0.55rem 0.72rem;
+}
+
+.landingHero,
+.landingSection {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.landingHero {
+  padding: 7rem 0 3rem;
+}
+
+.landingHeroInner {
+  max-width: 840px;
+}
+
+.landingHero h1,
+.landingSection h2 {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+.landingHero h1 {
+  max-width: 860px;
+  font-size: clamp(3.3rem, 7vw, 7rem);
+  line-height: 0.95;
+}
+
+.landingLead {
+  max-width: 780px;
+  margin: 1.35rem 0 0;
+  color: var(--studio-text);
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  line-height: 1.45;
+}
+
+.landingSupport {
+  max-width: 760px;
+  margin: 1rem 0 0;
+  color: var(--studio-muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.landingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.landingActions a {
+  text-decoration: none;
+}
+
+.landingSection {
+  padding: 4rem 0;
+}
+
+.landingDisclaimerSection {
+  padding-top: 0;
+}
+
+.sectionIntro {
+  max-width: 720px;
+}
+
+.sectionIntro h2,
+.disclaimerCard h2 {
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  line-height: 1;
+}
+
+.sectionIntro p,
+.disclaimerCard p {
+  color: var(--studio-muted);
+  line-height: 1.65;
+}
+
+.workflowCards {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+.workflowStepCard,
+.disclaimerCard {
+  border: 1px solid var(--studio-card-border);
+  background: rgba(14, 21, 22, 0.84);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+}
+
+.workflowStepCard {
+  min-height: 230px;
+  padding: 1.15rem;
+}
+
+.workflowStepCard span {
+  color: var(--studio-cyan-soft);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.workflowStepCard h3 {
+  margin: 1rem 0 0.75rem;
+  color: var(--studio-text);
+  font-size: 1.15rem;
+  line-height: 1.15;
+}
+
+.workflowStepCard p {
+  margin: 0;
+  color: var(--studio-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.disclaimerCard {
+  border-color: rgba(244, 201, 93, 0.42);
+  padding: clamp(1.35rem, 3vw, 2rem);
+}
+
+.disclaimerCard h2 {
+  margin: 0 0 1rem;
+}
+
+.disclaimerCard p {
+  max-width: 980px;
+  margin: 0.75rem 0 0;
+}
+
 .hero {
   position: relative;
   min-height: 74vh;
@@ -2034,6 +2215,7 @@ main {
   }
 
   .workflowBand,
+  .workflowCards,
   .signalSummary,
   .structuredFilters,
   .evidenceList,
@@ -2071,6 +2253,19 @@ main {
   .signalDetailHero h1 {
     font-size: 3rem;
     white-space: normal;
+  }
+
+  .landingNav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .landingHero {
+    padding: 4.5rem 0 3rem;
+  }
+
+  .landingHero h1 {
+    font-size: 3.2rem;
   }
 }
 
